@@ -10,6 +10,7 @@ interface CTASectionProps {
   secondaryButtonText?: string;
   secondaryButtonLink?: string;
   variant?: "default" | "dark" | "gold";
+  backgroundImage?: string;
 }
 
 export const CTASection = ({
@@ -20,6 +21,7 @@ export const CTASection = ({
   secondaryButtonText = "View Properties",
   secondaryButtonLink = "/properties",
   variant = "default",
+  backgroundImage,
 }: CTASectionProps) => {
   const bgClasses = {
     default: "bg-secondary",
@@ -39,9 +41,24 @@ export const CTASection = ({
     gold: "text-white/80",
   };
 
+  // If we have a background image, force text to be white/light
+  const isImageBackground = !!backgroundImage;
+  const activeVariant = isImageBackground ? "dark" : variant;
+
   return (
-    <section className={`section-luxury ${bgClasses[variant]}`}>
-      <div className="container-luxury">
+    <section className={`section-luxury relative overflow-hidden ${!isImageBackground ? bgClasses[variant] : ""}`}>
+      {backgroundImage && (
+        <div className="absolute inset-0 z-0">
+          <img
+            src={backgroundImage}
+            alt="Background"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-primary/80" />
+        </div>
+      )}
+
+      <div className="container-luxury relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -49,10 +66,10 @@ export const CTASection = ({
           transition={{ duration: 0.6 }}
           className="text-center max-w-3xl mx-auto"
         >
-          <h2 className={`section-title ${textClasses[variant]} mb-4`}>
+          <h2 className={`section-title ${isImageBackground ? "text-white" : textClasses[variant]} mb-4`}>
             {title}
           </h2>
-          <p className={`text-lg ${subtextClasses[variant]} mb-10`}>
+          <p className={`text-lg ${isImageBackground ? "text-white/80" : subtextClasses[variant]} mb-10`}>
             {subtitle}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -69,11 +86,10 @@ export const CTASection = ({
             </Link>
             <Link
               to={secondaryButtonLink}
-              className={`btn-luxury border-2 ${
-                variant === "default"
-                  ? "border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                  : "border-white/30 text-white hover:bg-white/10"
-              }`}
+              className={`btn-luxury border-2 ${isImageBackground || variant === "dark" || variant === "gold"
+                  ? "border-white/30 text-white hover:bg-white/10"
+                  : "border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                }`}
             >
               {secondaryButtonText}
             </Link>

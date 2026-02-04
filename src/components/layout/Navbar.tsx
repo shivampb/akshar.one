@@ -30,13 +30,9 @@ export const Navbar = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
-          ? "bg-background/95 backdrop-blur-md shadow-soft py-3"
-          : "bg-transparent py-5"
-      }`}
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white/95 backdrop-blur-md shadow-sm py-3"
     >
-      <nav className="container-luxury flex items-center justify-between">
+      <nav className="container-luxury relative flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="relative z-10">
           <h1 className="font-serif text-2xl md:text-3xl font-semibold tracking-tight">
@@ -46,16 +42,15 @@ export const Navbar = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden lg:flex items-center gap-10">
+        <div className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center gap-8">
           {navLinks.map((link) => (
             <Link
               key={link.path}
               to={link.path}
-              className={`elegant-underline text-sm font-medium tracking-wide uppercase transition-colors ${
-                location.pathname === link.path
-                  ? "text-gold"
-                  : "text-foreground hover:text-gold"
-              }`}
+              className={`elegant-underline text-sm font-medium tracking-wide uppercase transition-colors ${location.pathname === link.path
+                ? "text-gold"
+                : "text-foreground hover:text-gold"
+                }`}
             >
               {link.name}
             </Link>
@@ -79,7 +74,7 @@ export const Navbar = () => {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="lg:hidden relative z-10 p-2"
+          className="lg:hidden relative z-50 p-2"
           aria-label="Toggle menu"
         >
           {isOpen ? (
@@ -97,7 +92,7 @@ export const Navbar = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
-              className="fixed inset-0 top-0 bg-background lg:hidden"
+              className="fixed inset-0 top-0 bg-background lg:hidden z-40"
             >
               <div className="flex flex-col items-center justify-center h-full gap-8">
                 {navLinks.map((link, index) => (
@@ -109,11 +104,10 @@ export const Navbar = () => {
                   >
                     <Link
                       to={link.path}
-                      className={`text-2xl font-serif font-medium tracking-wide transition-colors ${
-                        location.pathname === link.path
-                          ? "text-gold"
-                          : "text-foreground hover:text-gold"
-                      }`}
+                      className={`text-2xl font-serif font-medium tracking-wide transition-colors ${location.pathname === link.path
+                        ? "text-gold"
+                        : "text-foreground hover:text-gold"
+                        }`}
                     >
                       {link.name}
                     </Link>

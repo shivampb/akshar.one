@@ -1,5 +1,6 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Shield, Award, Gem, Building } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { PropertyCard } from "@/components/PropertyCard";
@@ -9,6 +10,10 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { getFeaturedProperties } from "@/data/properties";
 import { testimonials } from "@/data/testimonials";
 import heroImage from "@/assets/hero-home.jpg";
+import property1 from "@/assets/property-1.jpg";
+import property3 from "@/assets/property-3.jpg";
+
+const heroImages = [heroImage, property1, property3];
 
 const features = [
   {
@@ -46,19 +51,34 @@ const stats = [
 
 const Home = () => {
   const featuredProperties = getFeaturedProperties();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center">
-        {/* Background Image */}
-        <div className="absolute inset-0">
-          <img
-            src={heroImage}
-            alt="Luxury property with ocean view"
-            className="w-full h-full object-cover"
-          />
-          <div className="image-overlay" />
+      <section className="relative min-h-screen flex items-center overflow-hidden">
+        {/* Background Image Carousel */}
+        <div className="absolute inset-0 w-full h-full">
+          <AnimatePresence mode="popLayout">
+            <motion.img
+              key={currentImageIndex}
+              src={heroImages[currentImageIndex]}
+              initial={{ opacity: 0, scale: 1.1 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 2 }}
+              alt="Luxury property"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          </AnimatePresence>
+          <div className="absolute inset-0 image-overlay z-10" />
         </div>
 
         {/* Content */}
@@ -118,10 +138,10 @@ const Home = () => {
           transition={{ delay: 1 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
         >
-          <span className="text-white/60 text-xs uppercase tracking-widest">
+          <span className="text-white/90 text-xs uppercase tracking-widest">
             Scroll
           </span>
-          <div className="w-px h-12 bg-gradient-to-b from-white/60 to-transparent" />
+          <div className="w-px h-12 bg-gradient-to-b from-white/90 to-transparent" />
         </motion.div>
       </section>
 
@@ -136,7 +156,7 @@ const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="text-center"
+                className="bg-primary-foreground/5 rounded-2xl p-6 text-center backdrop-blur-sm border border-white/10 hover:bg-primary-foreground/10 transition-colors"
               >
                 <p className="font-serif text-3xl md:text-4xl font-semibold text-gold mb-2">
                   {stat.value}
@@ -201,7 +221,7 @@ const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="text-center p-6"
+                className="modular-card text-center"
               >
                 <div className="w-16 h-16 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-6">
                   <feature.icon className="w-7 h-7 text-gold" />
@@ -239,7 +259,7 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <CTASection variant="dark" />
+      <CTASection variant="dark" backgroundImage={heroImage} />
     </Layout>
   );
 };
