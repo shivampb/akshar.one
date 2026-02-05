@@ -34,9 +34,9 @@ const values = [
 
 const milestones = [
   { year: "2008", title: "Founded", description: "EstateLuxe was established with a vision for luxury real estate" },
-  { year: "2012", title: "First $100M", description: "Reached our first $100 million in property sales" },
+  { year: "2012", title: "First ₹100M", description: "Reached our first ₹100 million in property sales" },
   { year: "2016", title: "Global Expansion", description: "Expanded operations to international markets" },
-  { year: "2020", title: "$1B Milestone", description: "Surpassed $1 billion in total property sales" },
+  { year: "2020", title: "₹1B Milestone", description: "Surpassed ₹1 billion in total property sales" },
   { year: "2024", title: "Industry Leader", description: "Recognized as a leading luxury real estate brand" },
 ];
 
@@ -285,7 +285,7 @@ const About = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
               {[
-                "Proven track record with $2.5B+ in sales",
+                "Proven track record with ₹2.5B+ in sales",
                 "Exclusive access to off-market properties",
                 "Dedicated team of luxury real estate experts",
                 "Personalized service tailored to your needs",

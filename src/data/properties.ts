@@ -45,7 +45,7 @@ export const properties: Property[] = [
     location: "Manhattan, New York",
     address: "432 Park Avenue, Floor 78, New York, NY 10022",
     price: 12500000,
-    priceLabel: "$12,500,000",
+    priceLabel: "₹12,500,000",
     shortDescription: "Breathtaking penthouse with panoramic city views and world-class amenities.",
     fullDescription: "Experience the pinnacle of luxury living in this extraordinary penthouse perched atop one of Manhattan's most prestigious addresses. Floor-to-ceiling windows frame spectacular 360-degree views of Central Park and the iconic city skyline. The residence features an open-concept living area with 14-foot ceilings, a chef's kitchen with premium Gaggenau appliances, and a private terrace perfect for entertaining. The master suite offers a spa-like bathroom with heated floors and a soaking tub overlooking the city. Building amenities include 24-hour concierge, private dining room, fitness center, and direct access to a Michelin-starred restaurant.",
     images: [property1, property1, property1],
@@ -113,7 +113,7 @@ export const properties: Property[] = [
     location: "Maldives",
     address: "North Malé Atoll, Republic of Maldives",
     price: 15800000,
-    priceLabel: "$15,800,000",
+    priceLabel: "₹15,800,000",
     shortDescription: "Private island villa with direct ocean access and unparalleled tropical luxury.",
     fullDescription: "Discover your own private paradise in this extraordinary oceanfront villa in the Maldives. Set on a pristine white sand beach with crystal-clear turquoise waters, this architectural marvel seamlessly blends indoor and outdoor living. The open-plan design features retractable glass walls that open to expansive decks and a private infinity pool overlooking the Indian Ocean. Wake to stunning sunrises from the master bedroom, positioned to capture the most spectacular views. The property includes a private dock, water sports equipment, and dedicated butler service. This is more than a home—it's a lifestyle reserved for the most discerning buyers.",
     images: [property3, property3, property3],
@@ -147,7 +147,7 @@ export const properties: Property[] = [
     location: "Aspen, Colorado",
     address: "1234 Mountain View Road, Aspen, CO 81611",
     price: 22000000,
-    priceLabel: "$22,000,000",
+    priceLabel: "₹22,000,000",
     shortDescription: "Ski-in/ski-out mountain estate with breathtaking alpine views and luxury amenities.",
     fullDescription: "Embrace the ultimate mountain lifestyle in this spectacular ski-in/ski-out estate in Aspen's most coveted neighborhood. This architectural masterpiece combines rustic elegance with modern sophistication, featuring reclaimed timber beams, floor-to-ceiling stone fireplaces, and walls of glass that frame panoramic views of the surrounding peaks. The great room soars to dramatic heights, while the gourmet kitchen is equipped for entertaining on any scale. After a day on the slopes, retreat to the private spa complete with sauna, steam room, and heated outdoor pool. A separate guest wing ensures privacy for visitors, and the three-car heated garage accommodates all your mountain toys.",
     images: [property4, property4, property4],
@@ -181,7 +181,7 @@ export const properties: Property[] = [
     location: "SoHo, New York",
     address: "155 Wooster Street, New York, NY 10012",
     price: 6750000,
-    priceLabel: "$6,750,000",
+    priceLabel: "₹6,750,000",
     shortDescription: "Iconic loft space with soaring ceilings, exposed brick, and designer finishes.",
     fullDescription: "Live in a piece of New York history with this extraordinary SoHo loft, originally built in the late 1800s and meticulously renovated to the highest standards. The 4,500 square foot residence showcases original cast-iron columns, exposed brick walls, and 16-foot ceilings that flood the space with natural light. The open floor plan provides endless possibilities for living and entertaining, while the chef's kitchen features top-of-the-line appliances and custom cabinetry. The master suite occupies its own wing, offering a private sanctuary in the heart of the city. Located on a prime cobblestone street, you're steps from world-class dining, galleries, and boutiques.",
     images: [property5, property5, property5],
@@ -260,9 +260,9 @@ export const getLocations = (): string[] => {
 };
 
 export const formatPrice = (price: number): string => {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("en-IN", {
     style: "currency",
-    currency: "USD",
+    currency: "INR",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(price);

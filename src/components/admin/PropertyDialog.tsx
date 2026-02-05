@@ -83,7 +83,7 @@ export const PropertyDialog = ({
 
     const onSubmit = async (data: PropertyFormValues) => {
         const slug = data.name.toLowerCase().replace(/ /g, "-");
-        const priceLabel = `$${data.price.toLocaleString()}`;
+        const priceLabel = `₹${data.price.toLocaleString()}`;
 
         const propertyData = {
             name: data.name,

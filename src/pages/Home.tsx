@@ -46,7 +46,7 @@ const features = [
 ];
 
 const stats = [
-  { value: "$2.5B+", label: "Properties Sold" },
+  { value: "₹2.5B+", label: "Properties Sold" },
   { value: "500+", label: "Happy Clients" },
   { value: "15+", label: "Years Experience" },
   { value: "50+", label: "Luxury Properties" },
