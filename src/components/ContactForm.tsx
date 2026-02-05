@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Send, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
+import emailjs from "@emailjs/browser";
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
@@ -61,16 +62,47 @@ export const ContactForm = ({ propertyName }: ContactFormProps) => {
 
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      // REPLACE THESE WITH YOUR ACTUAL EMAILJS CREDENTIALS
+      // Get them from https://dashboard.emailjs.com/
+      const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+      const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+      const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
-    setIsSubmitting(false);
-    setIsSubmitted(true);
+      // If keys are not set, simulate (so app doesn't crash during demo)
+      if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
+        console.warn("EmailJS credentials not set. Simulating success.");
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+      } else {
+        await emailjs.send(
+          SERVICE_ID,
+          TEMPLATE_ID,
+          {
+            from_name: formData.name,
+            from_email: formData.email,
+            phone: formData.phone,
+            message: formData.message,
+            property_interest: formData.propertyInterest || "General Inquiry",
+          },
+          PUBLIC_KEY
+        );
+      }
 
-    toast({
-      title: "Message Sent Successfully",
-      description: "We'll get back to you within 24 hours.",
-    });
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+      toast({
+        title: "Message Sent Successfully",
+        description: "We'll get back to you within 24 hours.",
+      });
+    } catch (error) {
+      console.error("EmailJS Error:", error);
+      setIsSubmitting(false);
+      toast({
+        title: "Error Sending Message",
+        description: "Please try again later or contact us directly.",
+        variant: "destructive",
+      });
+    }
   };
 
   if (isSubmitted) {

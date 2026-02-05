@@ -1,4 +1,7 @@
+import { useState, useEffect } from "react";
 import { useParams, Link, Navigate } from "react-router-dom";
+import { supabase } from "@/lib/supabase";
+import { Property } from "@/data/properties";
 import { motion } from "framer-motion";
 import {
   MapPin,
@@ -16,20 +19,69 @@ import { Layout } from "@/components/layout/Layout";
 import { ImageGallery } from "@/components/ImageGallery";
 import { ContactForm } from "@/components/ContactForm";
 import { PropertyCard } from "@/components/PropertyCard";
-import { getPropertyBySlug, properties } from "@/data/properties";
+
 
 const PropertyDetails = () => {
   const { slug } = useParams<{ slug: string }>();
-  const property = slug ? getPropertyBySlug(slug) : undefined;
+  const [property, setProperty] = useState<Property | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [relatedProperties, setRelatedProperties] = useState<Property[]>([]);
+
+  useEffect(() => {
+    const fetchProperty = async () => {
+      try {
+        if (!slug) return;
+
+        const { data: propertyData, error } = await supabase
+          .from('properties')
+          .select('*')
+          .eq('slug', slug)
+          .single();
+
+        if (error) {
+          console.error("Error fetching property:", error);
+          setLoading(false);
+          return;
+        }
+
+        if (propertyData) {
+          setProperty(propertyData as Property);
+
+          // Fetch related properties
+          const { data: relatedData } = await supabase
+            .from('properties')
+            .select('*')
+            .eq('type', propertyData.type)
+            .neq('id', propertyData.id)
+            .limit(3);
+
+          if (relatedData) {
+            setRelatedProperties(relatedData as Property[]);
+          }
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProperty();
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-8 pt-24 min-h-[calc(100vh-80px)] flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      </Layout>
+    );
+  }
 
   if (!property) {
     return <Navigate to="/properties" replace />;
   }
-
-  // Get related properties (same type, different id)
-  const relatedProperties = properties
-    .filter((p) => p.type === property.type && p.id !== property.id)
-    .slice(0, 3);
 
   return (
     <Layout>
@@ -191,11 +243,36 @@ const PropertyDetails = () => {
                   Location
                 </h2>
                 <div className="gold-line mb-6 mx-0" />
+
+                {/* Display City, State, Country if available */}
+                {(property.city || property.state || property.country) && (
+                  <div className="flex flex-wrap gap-2 mb-4 text-muted-foreground">
+                    {property.city && (
+                      <span className="flex items-center gap-1">
+                        <span className="font-medium text-foreground">City:</span> {property.city}
+                      </span>
+                    )}
+                    {property.state && (
+                      <span className="flex items-center gap-1">
+                        <span className="text-gold">•</span>
+                        <span className="font-medium text-foreground">State:</span> {property.state}
+                      </span>
+                    )}
+                    {property.country && (
+                      <span className="flex items-center gap-1">
+                        <span className="text-gold">•</span>
+                        <span className="font-medium text-foreground">Country:</span> {property.country}
+                      </span>
+                    )}
+                  </div>
+                )}
+
                 <div className="aspect-video rounded-sm overflow-hidden bg-muted">
                   <iframe
-                    src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(
-                      property.address
-                    )}`}
+                    src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${property.coordinates && property.coordinates.lat !== 0
+                      ? `${property.coordinates.lat},${property.coordinates.lng}`
+                      : encodeURIComponent(property.address)
+                      }`}
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}

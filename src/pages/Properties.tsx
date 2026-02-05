@@ -1,33 +1,110 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Filter, X } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { PropertyCard } from "@/components/PropertyCard";
-import { SectionHeading } from "@/components/SectionHeading";
 import { CTASection } from "@/components/CTASection";
 import {
-  properties,
-  getPropertyTypes,
-  getLocations,
-  type PropertyType,
+  PropertyType,
+  Property,
 } from "@/data/properties";
+import { supabase } from "@/lib/supabase";
+import { Country, State, City } from "country-state-city";
 
 const priceRanges = [
   { label: "All Prices", min: 0, max: Infinity },
-  { label: "Under $5M", min: 0, max: 5000000 },
-  { label: "$5M - $10M", min: 5000000, max: 10000000 },
-  { label: "$10M - $20M", min: 10000000, max: 20000000 },
-  { label: "Over $20M", min: 20000000, max: Infinity },
+  { label: "Under ₹5 Crore", min: 0, max: 50000000 },
+  { label: "₹5 Cr - ₹10 Cr", min: 50000000, max: 100000000 },
+  { label: "₹10 Cr - ₹20 Cr", min: 100000000, max: 200000000 },
+  { label: "Over ₹20 Crore", min: 200000000, max: Infinity },
 ];
 
 const Properties = () => {
+  const [properties, setProperties] = useState<Property[]>([]);
   const [selectedType, setSelectedType] = useState<PropertyType | "All">("All");
-  const [selectedLocation, setSelectedLocation] = useState<string>("All");
   const [selectedPriceRange, setSelectedPriceRange] = useState(0);
+
+  // New Location Filters
+  const [selectedCountry, setSelectedCountry] = useState<string>("All");
+  const [selectedState, setSelectedState] = useState<string>("All");
+  const [selectedCity, setSelectedCity] = useState<string>("All");
+
   const [showFilters, setShowFilters] = useState(false);
 
-  const propertyTypes = getPropertyTypes();
-  const locations = getLocations();
+  useEffect(() => {
+    const fetchProperties = async () => {
+      const { data, error } = await supabase.from('properties').select('*');
+      if (error) {
+        console.error('Error fetching properties:', error);
+      } else {
+        setProperties(data as Property[]);
+      }
+    };
+    fetchProperties();
+  }, []);
+
+  const propertyTypes = useMemo(() => ["Apartment", "Villa", "Plot", "Commercial"], []);
+
+  // --- Dynamic Filter Options ---
+  // Only show Countries that actually exist in our properties list
+  const availableCountries = useMemo(() => {
+    // Get unique country codes from properties
+    const uniqueCountryCodes = new Set(properties.map(p => p.country).filter(Boolean));
+
+    // Get country details for these codes
+    return Country.getAllCountries().filter(c => uniqueCountryCodes.has(c.isoCode));
+  }, [properties]);
+
+  // Only show States that actually exist in our properties list (filtered by selected Country if any)
+  const availableStates = useMemo(() => {
+    let filteredProperties = properties;
+    if (selectedCountry !== "All") {
+      filteredProperties = properties.filter(p => p.country === selectedCountry);
+    }
+
+    const uniqueStateCodes = new Set(filteredProperties.map(p => p.state).filter(Boolean));
+
+    // If no country selected, ideally we show all states present in DB? 
+    // Or strictly states belonging to the country. Data-wise we have codes.
+    // To map generic codes back to State objects efficiently without checking ALL world states:
+    // We can rely on 'State.getStatesOfCountry' if a country is selected.
+
+    if (selectedCountry !== "All") {
+      return State.getStatesOfCountry(selectedCountry).filter(s => uniqueStateCodes.has(s.isoCode));
+    } else {
+      // If no country selected, showing ALL unused states is confusing/heavy. 
+      // Better to wait for Country selection OR show states from the filtered unique set if we can map them back.
+      // However, State.js doesn't easily resolve stateCode -> StateObj without CountryCode.
+      // So we'll limit: Must select Country first, OR we assume we only care about states matching active properties.
+      return [];
+    }
+  }, [properties, selectedCountry]);
+
+  // Only show Cities that exist in properties
+  const availableCities = useMemo(() => {
+    let filteredProperties = properties;
+    if (selectedCountry !== "All") {
+      filteredProperties = filteredProperties.filter(p => p.country === selectedCountry);
+    }
+    if (selectedState !== "All") {
+      filteredProperties = filteredProperties.filter(p => p.state === selectedState);
+    }
+
+    const uniqueCityNames = new Set(filteredProperties.map(p => p.city).filter(Boolean));
+    return Array.from(uniqueCityNames).sort();
+  }, [properties, selectedCountry, selectedState]);
+
+
+  // Reset dependent filters
+  useEffect(() => {
+    setSelectedState("All");
+    setSelectedCity("All");
+  }, [selectedCountry]);
+
+  useEffect(() => {
+    setSelectedCity("All");
+  }, [selectedState]);
+
 
   const filteredProperties = useMemo(() => {
     return properties.filter((property) => {
@@ -36,8 +113,16 @@ const Properties = () => {
         return false;
       }
 
-      // Location filter
-      if (selectedLocation !== "All" && property.location !== selectedLocation) {
+      // Country Filter
+      if (selectedCountry !== "All" && property.country !== selectedCountry) {
+        return false;
+      }
+      // State Filter (relaxed check for now as some old data might miss state)
+      if (selectedState !== "All" && property.state !== selectedState) {
+        return false;
+      }
+      // City Filter
+      if (selectedCity !== "All" && property.city !== selectedCity) {
         return false;
       }
 
@@ -49,16 +134,20 @@ const Properties = () => {
 
       return true;
     });
-  }, [selectedType, selectedLocation, selectedPriceRange]);
+  }, [properties, selectedType, selectedCountry, selectedState, selectedCity, selectedPriceRange]);
 
   const hasActiveFilters =
     selectedType !== "All" ||
-    selectedLocation !== "All" ||
+    selectedCountry !== "All" ||
+    selectedState !== "All" ||
+    selectedCity !== "All" ||
     selectedPriceRange !== 0;
 
   const clearFilters = () => {
     setSelectedType("All");
-    setSelectedLocation("All");
+    setSelectedCountry("All");
+    setSelectedState("All");
+    setSelectedCity("All");
     setSelectedPriceRange(0);
   };
 
@@ -90,16 +179,65 @@ const Properties = () => {
       {/* Filters Section */}
       <section className="py-8 border-b border-border sticky top-[72px] bg-background/95 backdrop-blur-sm z-30">
         <div className="container-luxury">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            {/* Desktop Filters */}
-            <div className="hidden lg:flex items-center gap-4">
-              {/* Type Filter */}
+
+          {/* Desktop Filters */}
+          <div className="hidden lg:grid grid-cols-5 gap-4">
+            {/* Country Filter */}
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide px-1">Country</label>
+              <select
+                value={selectedCountry}
+                onChange={(e) => setSelectedCountry(e.target.value)}
+                className="input-luxury py-2 px-3 w-full text-sm"
+              >
+                <option value="All">All Countries</option>
+                {availableCountries.map((c) => (
+                  <option key={c.isoCode} value={c.isoCode}>{c.name}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* State Filter */}
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide px-1">State</label>
+              <select
+                value={selectedState}
+                onChange={(e) => setSelectedState(e.target.value)}
+                disabled={selectedCountry === "All"}
+                className="input-luxury py-2 px-3 w-full text-sm disabled:opacity-50"
+              >
+                <option value="All">All States</option>
+                {availableStates.map((s) => (
+                  <option key={s.isoCode} value={s.isoCode}>{s.name}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* City Filter */}
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide px-1">City</label>
+              <select
+                value={selectedCity}
+                onChange={(e) => setSelectedCity(e.target.value)}
+                disabled={selectedState === "All" && selectedCountry === "All"}
+                className="input-luxury py-2 px-3 w-full text-sm disabled:opacity-50"
+              >
+                <option value="All">All Cities</option>
+                {availableCities.map((cityName) => (
+                  <option key={cityName} value={cityName}>{cityName}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Type Filter */}
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide px-1">Type</label>
               <select
                 value={selectedType}
                 onChange={(e) =>
                   setSelectedType(e.target.value as PropertyType | "All")
                 }
-                className="input-luxury py-2 px-4 min-w-[160px]"
+                className="input-luxury py-2 px-3 w-full text-sm"
               >
                 <option value="All">All Types</option>
                 {propertyTypes.map((type) => (
@@ -108,26 +246,15 @@ const Properties = () => {
                   </option>
                 ))}
               </select>
+            </div>
 
-              {/* Location Filter */}
-              <select
-                value={selectedLocation}
-                onChange={(e) => setSelectedLocation(e.target.value)}
-                className="input-luxury py-2 px-4 min-w-[180px]"
-              >
-                <option value="All">All Locations</option>
-                {locations.map((location) => (
-                  <option key={location} value={location}>
-                    {location}
-                  </option>
-                ))}
-              </select>
-
-              {/* Price Filter */}
+            {/* Price Filter */}
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide px-1">Price Range</label>
               <select
                 value={selectedPriceRange}
                 onChange={(e) => setSelectedPriceRange(Number(e.target.value))}
-                className="input-luxury py-2 px-4 min-w-[160px]"
+                className="input-luxury py-2 px-3 w-full text-sm"
               >
                 {priceRanges.map((range, index) => (
                   <option key={range.label} value={index}>
@@ -135,49 +262,41 @@ const Properties = () => {
                   </option>
                 ))}
               </select>
-
-              {/* Clear Filters */}
-              {hasActiveFilters && (
-                <button
-                  onClick={clearFilters}
-                  className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                  Clear Filters
-                </button>
-              )}
             </div>
+          </div>
 
-            {/* Mobile Filter Toggle */}
-            <div className="lg:hidden flex items-center justify-between">
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center gap-2 text-sm font-medium"
-              >
-                <Filter className="w-4 h-4" />
-                Filters
-                {hasActiveFilters && (
-                  <span className="w-5 h-5 rounded-full bg-gold text-white text-xs flex items-center justify-center">
-                    {(selectedType !== "All" ? 1 : 0) +
-                      (selectedLocation !== "All" ? 1 : 0) +
-                      (selectedPriceRange !== 0 ? 1 : 0)}
-                  </span>
-                )}
-              </button>
-              {hasActiveFilters && (
-                <button
-                  onClick={clearFilters}
-                  className="text-sm text-muted-foreground"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-
-            {/* Results Count */}
+          {/* Active Filters Summary & Clear (Desktop) */}
+          <div className="hidden lg:flex items-center justify-between mt-4">
             <p className="text-sm text-muted-foreground">
-              Showing {filteredProperties.length} of {properties.length}{" "}
-              properties
+              Showing <span className="text-foreground font-medium">{filteredProperties.length}</span> properties
+            </p>
+            {hasActiveFilters && (
+              <button
+                onClick={clearFilters}
+                className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-destructive transition-colors"
+              >
+                <X className="w-4 h-4" />
+                Clear Filters
+              </button>
+            )}
+          </div>
+
+          {/* Mobile Filter Toggle */}
+          <div className="lg:hidden flex items-center justify-between">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-2 text-sm font-medium"
+            >
+              <Filter className="w-4 h-4" />
+              Filters
+              {hasActiveFilters && (
+                <span className="w-5 h-5 rounded-full bg-gold text-white text-xs flex items-center justify-center">
+                  !
+                </span>
+              )}
+            </button>
+            <p className="text-sm text-muted-foreground">
+              {filteredProperties.length} Results
             </p>
           </div>
 
@@ -189,45 +308,93 @@ const Properties = () => {
               exit={{ opacity: 0, height: 0 }}
               className="lg:hidden mt-6 space-y-4"
             >
-              <select
-                value={selectedType}
-                onChange={(e) =>
-                  setSelectedType(e.target.value as PropertyType | "All")
-                }
-                className="input-luxury py-2 px-4 w-full"
-              >
-                <option value="All">All Types</option>
-                {propertyTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
+              {/* Matches desktop fields but stacked */}
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-muted-foreground uppercase">Country</label>
+                <select
+                  value={selectedCountry}
+                  onChange={(e) => setSelectedCountry(e.target.value)}
+                  className="input-luxury py-2 px-3 w-full"
+                >
+                  <option value="All">All Countries</option>
+                  {availableCountries.map((c) => (
+                    <option key={c.isoCode} value={c.isoCode}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
 
-              <select
-                value={selectedLocation}
-                onChange={(e) => setSelectedLocation(e.target.value)}
-                className="input-luxury py-2 px-4 w-full"
-              >
-                <option value="All">All Locations</option>
-                {locations.map((location) => (
-                  <option key={location} value={location}>
-                    {location}
-                  </option>
-                ))}
-              </select>
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-muted-foreground uppercase">State</label>
+                <select
+                  value={selectedState}
+                  onChange={(e) => setSelectedState(e.target.value)}
+                  disabled={selectedCountry === "All"}
+                  className="input-luxury py-2 px-3 w-full disabled:opacity-50"
+                >
+                  <option value="All">All States</option>
+                  {availableStates.map((s) => (
+                    <option key={s.isoCode} value={s.isoCode}>{s.name}</option>
+                  ))}
+                </select>
+              </div>
 
-              <select
-                value={selectedPriceRange}
-                onChange={(e) => setSelectedPriceRange(Number(e.target.value))}
-                className="input-luxury py-2 px-4 w-full"
-              >
-                {priceRanges.map((range, index) => (
-                  <option key={range.label} value={index}>
-                    {range.label}
-                  </option>
-                ))}
-              </select>
+              {/* City */}
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-muted-foreground uppercase">City</label>
+                <select
+                  value={selectedCity}
+                  onChange={(e) => setSelectedCity(e.target.value)}
+                  disabled={selectedState === "All" && selectedCountry === "All"}
+                  className="input-luxury py-2 px-3 w-full disabled:opacity-50"
+                >
+                  <option value="All">All Cities</option>
+                  {availableCities.map((cityName) => (
+                    <option key={cityName} value={cityName}>{cityName}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-muted-foreground uppercase">Type</label>
+                <select
+                  value={selectedType}
+                  onChange={(e) =>
+                    setSelectedType(e.target.value as PropertyType | "All")
+                  }
+                  className="input-luxury py-2 px-3 w-full"
+                >
+                  <option value="All">All Types</option>
+                  {propertyTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-muted-foreground uppercase">Price</label>
+                <select
+                  value={selectedPriceRange}
+                  onChange={(e) => setSelectedPriceRange(Number(e.target.value))}
+                  className="input-luxury py-2 px-3 w-full"
+                >
+                  {priceRanges.map((range, index) => (
+                    <option key={range.label} value={index}>
+                      {range.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {hasActiveFilters && (
+                <button
+                  onClick={clearFilters}
+                  className="w-full py-2 bg-destructive/10 text-destructive rounded-sm text-sm"
+                >
+                  Clear All Filters
+                </button>
+              )}
             </motion.div>
           )}
         </div>

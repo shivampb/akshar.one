@@ -30,9 +30,9 @@ export const Navbar = () => {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white/95 backdrop-blur-md shadow-sm py-3"
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white shadow-sm py-3"
     >
-      <nav className="container-luxury relative flex items-center justify-between">
+      <nav className="container mx-auto px-4 relative flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="relative z-10">
           <h1 className="font-serif text-2xl md:text-3xl font-semibold tracking-tight">
@@ -92,7 +92,7 @@ export const Navbar = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
-              className="fixed inset-0 top-0 bg-background lg:hidden z-40"
+              className="fixed inset-0 top-0 bg-white lg:hidden z-40"
             >
               <div className="flex flex-col items-center justify-center h-full gap-8">
                 {navLinks.map((link, index) => (

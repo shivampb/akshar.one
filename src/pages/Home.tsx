@@ -7,11 +7,14 @@ import { PropertyCard } from "@/components/PropertyCard";
 import { TestimonialCard } from "@/components/TestimonialCard";
 import { CTASection } from "@/components/CTASection";
 import { SectionHeading } from "@/components/SectionHeading";
-import { getFeaturedProperties } from "@/data/properties";
 import { testimonials } from "@/data/testimonials";
+import { supabase } from "@/lib/supabase";
+import { Property } from "@/data/properties";
 import heroImage from "@/assets/hero-home.jpg";
 import property1 from "@/assets/property-1.jpg";
 import property3 from "@/assets/property-3.jpg";
+import useEmblaCarousel from "embla-carousel-react";
+import AutoScroll from "embla-carousel-auto-scroll";
 
 const heroImages = [heroImage, property1, property3];
 
@@ -50,10 +53,33 @@ const stats = [
 ];
 
 const Home = () => {
-  const featuredProperties = getFeaturedProperties();
+  const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  // Embla Carousel Hook - Continuous Auto Scroll
+  const [emblaRef] = useEmblaCarousel({ loop: true, align: "start" }, [
+    AutoScroll({
+      speed: 1, // Slow speed
+      stopOnInteraction: false,
+      stopOnMouseEnter: true // Optional: pause when user hovers
+    }),
+  ]);
+
   useEffect(() => {
+    const fetchFeatured = async () => {
+      // Fetches ALL featured properties (limit removed)
+      const { data } = await supabase
+        .from('properties')
+        .select('*')
+        .eq('isFeatured', true);
+
+      if (data) {
+        setFeaturedProperties(data as Property[]);
+      }
+    };
+
+    fetchFeatured();
+
     const timer = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
     }, 5000);
@@ -170,7 +196,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Featured Properties Section */}
+      {/* Featured Properties Section - Carousel */}
       <section className="section-luxury">
         <div className="container-luxury">
           <SectionHeading
@@ -178,7 +204,8 @@ const Home = () => {
             subtitle="Explore our handpicked selection of extraordinary homes, each offering unparalleled luxury and exceptional value."
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Mobile View: Grid Limit 3 */}
+          <div className="block md:hidden grid grid-cols-1 gap-8">
             {featuredProperties.slice(0, 3).map((property, index) => (
               <PropertyCard
                 key={property.id}
@@ -186,6 +213,20 @@ const Home = () => {
                 index={index}
               />
             ))}
+          </div>
+
+          {/* Desktop/Tablet View: Carousel */}
+          <div className="hidden md:block overflow-hidden" ref={emblaRef}>
+            <div className="flex -ml-4">
+              {featuredProperties.map((property, index) => (
+                <div key={property.id} className="flex-[0_0_50%] lg:flex-[0_0_33.333%] pl-4 min-w-0">
+                  <PropertyCard
+                    property={property}
+                    index={index}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
 
           <motion.div

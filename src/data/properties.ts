@@ -27,7 +27,10 @@ export interface Property {
   };
   amenities: string[];
   isFeatured: boolean;
-  coordinates: {
+  country?: string;
+  state?: string;
+  city?: string;
+  coordinates?: {
     lat: number;
     lng: number;
   };
