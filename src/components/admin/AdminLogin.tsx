@@ -21,7 +21,7 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
-        if (username === "admin" && password === "admin123") {
+        if (username === "admin" && password === "TheChetanSheladiya") {
             toast.success("Logged in successfully");
             onLogin();
         } else {
