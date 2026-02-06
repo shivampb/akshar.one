@@ -3,6 +3,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import { formatPrice } from "@/lib/utils";
 
 import { Property } from "@/data/properties";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,13 @@ interface PropertyDialogProps {
     onSuccess: () => void;
 }
 
+const getCategoryFromType = (type: string): "Residential" | "Commercial" | "Plot" => {
+    if (["Apartment", "Villa", "Bungalow"].includes(type)) return "Residential";
+    if (["Shop", "Office", "Showroom", "Warehouse", "Commercial"].includes(type)) return "Commercial";
+    if (["Plot", "Residential Plot", "Commercial Plot", "Industrial Plot", "Agricultural Land"].includes(type)) return "Plot";
+    return "Residential";
+};
+
 export const PropertyDialog = ({
     open,
     onOpenChange,
@@ -38,6 +46,7 @@ export const PropertyDialog = ({
     const form = useForm<PropertyFormValues>({
         resolver: zodResolver(propertySchema),
         defaultValues: {
+            category: "Residential",
             type: "Apartment",
             isFeatured: false,
             features: { area: 0, bedrooms: 0, bathrooms: 0, parking: 0 },
@@ -52,6 +61,7 @@ export const PropertyDialog = ({
         if (editingProperty) {
             form.reset({
                 name: editingProperty.name,
+                category: editingProperty.category || getCategoryFromType(editingProperty.type),
                 type: editingProperty.type,
                 location: editingProperty.location,
                 address: editingProperty.address,
@@ -62,31 +72,43 @@ export const PropertyDialog = ({
                 features: editingProperty.features,
                 images: editingProperty.images || [],
                 coordinates: editingProperty.coordinates || { lat: 0, lng: 0 },
-                country: editingProperty.country || "", // Add migration or optional check if DB doesn't have it yet
+                country: editingProperty.country || "",
                 state: editingProperty.state || "",
                 city: editingProperty.city || "",
             });
         } else {
             form.reset({
+                category: "Residential",
                 type: "Apartment",
                 isFeatured: false,
-                features: { area: 0, bedrooms: 0, bathrooms: 0, parking: 0 },
+                features: {
+                    area: 0,
+                    bedrooms: 0,
+                    bathrooms: 0,
+                    parking: 0,
+                    maintenanceCharges: 0,
+                    unitsOnFloor: 0,
+                    lifts: 0,
+                },
                 images: [],
                 coordinates: { lat: 0, lng: 0 },
                 country: "",
                 state: "",
                 city: "",
+                amenities: [],
             });
         }
     }, [editingProperty, form]);
 
 
+
     const onSubmit = async (data: PropertyFormValues) => {
         const slug = data.name.toLowerCase().replace(/ /g, "-");
-        const priceLabel = `₹${data.price.toLocaleString()}`;
+        const priceLabel = formatPrice(data.price);
 
         const propertyData = {
             name: data.name,
+            category: data.category,
             type: data.type,
             location: data.location,
             address: data.address,

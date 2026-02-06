@@ -5,12 +5,26 @@ import property4 from "@/assets/property-4.jpg";
 import property5 from "@/assets/property-5.jpg";
 import property6 from "@/assets/property-6.jpg";
 
-export type PropertyType = "Apartment" | "Villa" | "Plot" | "Commercial";
+export type PropertyType =
+  | "Apartment"
+  | "Villa"
+  | "Bungalow"
+  | "Plot"
+  | "Residential Plot"
+  | "Commercial Plot"
+  | "Industrial Plot"
+  | "Agricultural Land"
+  | "Commercial"
+  | "Shop"
+  | "Office"
+  | "Showroom"
+  | "Warehouse";
 
 export interface Property {
   id: string;
   name: string;
   slug: string;
+  category?: "Residential" | "Commercial" | "Plot";
   type: PropertyType;
   location: string;
   address: string;
@@ -24,6 +38,12 @@ export interface Property {
     bedrooms: number;
     bathrooms: number;
     parking: number;
+    maintenanceCharges?: number;
+    propertyAge?: string;
+    unitsOnFloor?: number;
+    lifts?: number;
+    facing?: string;
+    waterAvailability?: string;
   };
   amenities: string[];
   isFeatured: boolean;

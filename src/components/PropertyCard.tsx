@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { MapPin, Bed, Bath, Square, ArrowRight } from "lucide-react";
 import type { Property } from "@/data/properties";
+import { formatPrice } from "@/lib/utils";
 
 interface PropertyCardProps {
   property: Property;
@@ -26,7 +27,7 @@ export const PropertyCard = ({ property, index = 0 }: PropertyCardProps) => {
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          
+
           {/* Property Type Badge */}
           <div className="absolute top-4 left-4">
             <span className="inline-block px-3 py-1 text-xs font-medium uppercase tracking-wider bg-background/90 backdrop-blur-sm text-foreground rounded-sm">
@@ -72,14 +73,21 @@ export const PropertyCard = ({ property, index = 0 }: PropertyCardProps) => {
 
           {/* Features */}
           <div className="flex items-center gap-4 pb-4 mb-4 border-b border-border">
-            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <Bed className="w-4 h-4" />
-              <span>{property.features.bedrooms}</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <Bath className="w-4 h-4" />
-              <span>{property.features.bathrooms}</span>
-            </div>
+            {/* Show Bed/Bath only for Residential */}
+            {(property.category === "Residential" ||
+              ["Apartment", "Villa", "Bungalow"].includes(property.type) ||
+              (!property.category && !["Shop", "Office", "Showroom", "Warehouse", "Commercial", "Plot", "Residential Plot", "Commercial Plot", "Industrial Plot", "Agricultural Land"].includes(property.type))) && (
+                <>
+                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <Bed className="w-4 h-4" />
+                    <span>{property.features.bedrooms}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <Bath className="w-4 h-4" />
+                    <span>{property.features.bathrooms}</span>
+                  </div>
+                </>
+              )}
             <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
               <Square className="w-4 h-4" />
               <span>{property.features.area.toLocaleString()} sqft</span>
@@ -89,7 +97,7 @@ export const PropertyCard = ({ property, index = 0 }: PropertyCardProps) => {
           {/* Price */}
           <div className="flex items-center justify-between">
             <span className="font-serif text-xl font-semibold text-foreground">
-              {property.priceLabel}
+              {formatPrice(property.price)}
             </span>
             <span className="text-xs text-muted-foreground uppercase tracking-wider">
               Starting Price

@@ -1,4 +1,5 @@
 import { Property } from "@/data/properties";
+import { formatPrice } from "@/lib/utils";
 import {
     Table,
     TableBody,
@@ -52,7 +53,7 @@ export const PropertyList = ({ properties, onEdit, onDelete }: PropertyListProps
                                     <TableCell className="font-medium whitespace-nowrap">{property.name}</TableCell>
                                     <TableCell>{property.type}</TableCell>
                                     <TableCell>{property.location}</TableCell>
-                                    <TableCell className="whitespace-nowrap">{property.priceLabel}</TableCell>
+                                    <TableCell className="whitespace-nowrap">{formatPrice(property.price)}</TableCell>
                                     <TableCell>
                                         <Badge variant={property.isFeatured ? "default" : "secondary"}>
                                             {property.isFeatured ? "Featured" : "Standard"}

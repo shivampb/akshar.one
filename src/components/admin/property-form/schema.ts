@@ -2,7 +2,8 @@ import * as z from "zod";
 
 export const propertySchema = z.object({
     name: z.string().min(1, "Name is required"),
-    type: z.enum(["Apartment", "Villa", "Plot", "Commercial"] as const),
+    category: z.enum(["Residential", "Commercial", "Plot"] as const),
+    type: z.string().min(1, "Type is required"),
     location: z.string().min(1, "Location is required"),
     address: z.string().min(1, "Address is required"),
     price: z.number().min(0, "Price must be positive"),
@@ -14,6 +15,12 @@ export const propertySchema = z.object({
         bedrooms: z.number().min(0),
         bathrooms: z.number().min(0),
         parking: z.number().min(0),
+        maintenanceCharges: z.number().min(0).optional(),
+        propertyAge: z.string().optional(),
+        unitsOnFloor: z.number().min(0).optional(),
+        lifts: z.number().min(0).optional(),
+        facing: z.string().optional(),
+        waterAvailability: z.string().optional(),
     }),
     images: z.array(z.string()).min(1, "At least one image is required"),
     amenities: z.array(z.string()).default([]),

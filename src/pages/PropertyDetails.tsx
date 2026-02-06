@@ -14,11 +14,18 @@ import {
   Calendar,
   MessageSquare,
   Share2,
+  ArrowUp,
+  Compass,
+  Droplets,
+  Building,
+  History,
+  Wrench,
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { ImageGallery } from "@/components/ImageGallery";
 import { ContactForm } from "@/components/ContactForm";
 import { PropertyCard } from "@/components/PropertyCard";
+import { formatPrice } from "@/lib/utils";
 
 
 const PropertyDetails = () => {
@@ -26,6 +33,35 @@ const PropertyDetails = () => {
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
   const [relatedProperties, setRelatedProperties] = useState<Property[]>([]);
+  const [fetchedLocation, setFetchedLocation] = useState<string | null>(null);
+  const [selectedAreaUnit, setSelectedAreaUnit] = useState<string>("sqft");
+  const [isAreaDropdownOpen, setIsAreaDropdownOpen] = useState(false);
+
+  // Area conversion factors (from sqft)
+  const areaUnits = {
+    sqft: { label: "sqft", factor: 1 },
+    sqyrd: { label: "sqyrd", factor: 0.111111 }, // 1 sq yard = 9 sqft
+    sqm: { label: "sqm", factor: 0.092903 }, // 1 sq meter = 10.764 sqft
+    acre: { label: "acre", factor: 0.000022956 }, // 1 acre = 43560 sqft
+    bigha: { label: "bigha", factor: 0.000367 }, // 1 bigha = 27225 sqft (varies by region)
+    hectare: { label: "hectare", factor: 0.000009290304 }, // 1 hectare = 107639 sqft
+    marla: { label: "marla", factor: 0.003673 }, // 1 marla = 272.25 sqft
+    kanal: { label: "kanal", factor: 0.000183486 }, // 1 kanal = 5445 sqft
+    biswai: { label: "biswai", factor: 0.007334 }, // 1 biswai = 136.36 sqft (approx)
+    cent: { label: "cent", factor: 0.002296 }, // 1 cent = 435.6 sqft
+    perch: { label: "perch", factor: 0.003673 }, // 1 perch = 272.25 sqft
+    guntha: { label: "guntha", factor: 0.000918 }, // 1 guntha = 1089 sqft
+    are: { label: "are", factor: 0.000929 }, // 1 are = 1076.39 sqft
+    katha: { label: "katha", factor: 0.001389 }, // 1 katha = 720 sqft (approx)
+    gaj: { label: "gaj", factor: 0.111111 }, // 1 gaj = 9 sqft (square yard)
+    killa: { label: "killa", factor: 0.000230 }, // 1 killa = 4356 sqft
+    kuncham: { label: "kuncham", factor: 0.000918 }, // Similar to guntha
+  };
+
+  const convertArea = (sqft: number, unit: string) => {
+    const converted = sqft * areaUnits[unit as keyof typeof areaUnits].factor;
+    return converted.toFixed(2);
+  };
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -68,6 +104,46 @@ const PropertyDetails = () => {
 
     fetchProperty();
   }, [slug]);
+
+  useEffect(() => {
+    const fetchLocationName = async () => {
+      if (property?.coordinates && property.coordinates.lat !== 0 && property.coordinates.lng !== 0) {
+        try {
+          const response = await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${property.coordinates.lat},${property.coordinates.lng}&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8`
+          );
+          const data = await response.json();
+          if (data.results && data.results.length > 0) {
+            // Try to find locality and sublocality
+            const addressComponents = data.results[0].address_components;
+            let city = "";
+            let area = "";
+
+            for (const component of addressComponents) {
+              if (component.types.includes("locality")) {
+                city = component.long_name;
+              }
+              if (component.types.includes("sublocality") || component.types.includes("sublocality_level_1")) {
+                area = component.long_name;
+              }
+            }
+
+            if (area && city) {
+              setFetchedLocation(`${area}, ${city}`);
+            } else if (data.results[0].formatted_address) {
+              setFetchedLocation(data.results[0].formatted_address);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching location name:", error);
+        }
+      }
+    };
+
+    if (property) {
+      fetchLocationName();
+    }
+  }, [property]);
 
   if (loading) {
     return (
@@ -126,7 +202,7 @@ const PropertyDetails = () => {
               </h1>
               <div className="flex items-center gap-2 text-muted-foreground">
                 <MapPin className="w-4 h-4" />
-                <span>{property.address}</span>
+                <span>{fetchedLocation || property.address}</span>
               </div>
             </motion.div>
 
@@ -137,9 +213,15 @@ const PropertyDetails = () => {
               className="text-left lg:text-right"
             >
               <p className="font-serif text-3xl md:text-4xl font-semibold text-foreground mb-2">
-                {property.priceLabel}
+                {formatPrice(property.price)}
               </p>
-              <p className="text-sm text-muted-foreground">Starting Price</p>
+              <div className="flex flex-col items-start lg:items-end gap-1">
+                {property.features.area > 0 && (
+                  <p className="text-sm font-medium text-gold">
+                    ₹{Math.round(property.price / property.features.area).toLocaleString()}/sq.ft
+                  </p>
+                )}
+              </div>
             </motion.div>
           </div>
         </div>
@@ -163,35 +245,156 @@ const PropertyDetails = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="grid grid-cols-2 md:grid-cols-4 gap-6 p-6 bg-secondary rounded-sm"
+                className="bg-secondary/30 rounded-lg p-6"
               >
-                <div className="text-center">
-                  <Square className="w-6 h-6 text-gold mx-auto mb-2" />
-                  <p className="font-serif text-xl font-semibold">
-                    {property.features.area.toLocaleString()}
-                  </p>
-                  <p className="text-sm text-muted-foreground">Sq Ft</p>
-                </div>
-                <div className="text-center">
-                  <Bed className="w-6 h-6 text-gold mx-auto mb-2" />
-                  <p className="font-serif text-xl font-semibold">
-                    {property.features.bedrooms}
-                  </p>
-                  <p className="text-sm text-muted-foreground">Bedrooms</p>
-                </div>
-                <div className="text-center">
-                  <Bath className="w-6 h-6 text-gold mx-auto mb-2" />
-                  <p className="font-serif text-xl font-semibold">
-                    {property.features.bathrooms}
-                  </p>
-                  <p className="text-sm text-muted-foreground">Bathrooms</p>
-                </div>
-                <div className="text-center">
-                  <Car className="w-6 h-6 text-gold mx-auto mb-2" />
-                  <p className="font-serif text-xl font-semibold">
-                    {property.features.parking}
-                  </p>
-                  <p className="text-sm text-muted-foreground">Parking</p>
+
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Super Area with Dropdown */}
+                  <div className="space-y-1">
+                    <p className="text-sm text-muted-foreground">Super Area</p>
+                    <div className="flex items-baseline gap-2">
+                      <p className="font-serif text-xl font-bold text-foreground">
+                        {selectedAreaUnit === "sqft"
+                          ? property.features.area.toLocaleString()
+                          : convertArea(property.features.area, selectedAreaUnit)}
+                      </p>
+
+                      {/* Area Unit Dropdown */}
+                      <div className="relative inline-block">
+                        <button
+                          onClick={() => setIsAreaDropdownOpen(!isAreaDropdownOpen)}
+                          className="text-sm text-muted-foreground hover:text-gold transition-colors flex items-center gap-0.5"
+                        >
+                          {areaUnits[selectedAreaUnit as keyof typeof areaUnits].label}
+                          <svg
+                            className={`w-3 h-3 transition-transform ${isAreaDropdownOpen ? 'rotate-180' : ''}`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+
+                        {isAreaDropdownOpen && (
+                          <>
+                            <div
+                              className="fixed inset-0 z-40"
+                              onClick={() => setIsAreaDropdownOpen(false)}
+                            />
+                            <div className="absolute z-50 mt-1 left-0 w-36 bg-card border border-border rounded-md shadow-xl max-h-60 overflow-y-auto">
+                              {Object.entries(areaUnits).map(([key, { label }]) => (
+                                <button
+                                  key={key}
+                                  onClick={() => {
+                                    setSelectedAreaUnit(key);
+                                    setIsAreaDropdownOpen(false);
+                                  }}
+                                  className={`w-full text-left px-3 py-2 text-sm hover:bg-secondary transition-colors ${selectedAreaUnit === key
+                                    ? 'bg-secondary text-gold font-medium'
+                                    : 'text-foreground'
+                                    }`}
+                                >
+                                  {label}
+                                </button>
+                              ))}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    {property.features.area > 0 && (
+                      <p className="text-xs text-muted-foreground">
+                        ₹{Math.round(property.price / property.features.area).toLocaleString()}/sqft
+                      </p>
+                    )}
+                  </div>
+
+                  {(property.category === "Residential" ||
+                    ["Apartment", "Villa", "Bungalow"].includes(property.type) ||
+                    (!property.category && !["Shop", "Office", "Showroom", "Warehouse", "Commercial", "Plot", "Residential Plot", "Commercial Plot", "Industrial Plot", "Agricultural Land"].includes(property.type))) && (
+                      <>
+                        {/* Bedrooms */}
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">Bedrooms</p>
+                          <p className="font-serif text-xl font-bold text-foreground">
+                            {property.features.bedrooms}
+                          </p>
+                        </div>
+
+                        {/* Bathrooms */}
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">Bathrooms</p>
+                          <p className="font-serif text-xl font-bold text-foreground">
+                            {property.features.bathrooms}
+                          </p>
+                        </div>
+
+                        {/* Parking */}
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">Parking</p>
+                          <p className="font-serif text-xl font-bold text-foreground">
+                            {property.features.parking}
+                          </p>
+                        </div>
+                      </>
+                    )}
+
+                  {/* Additional Specs */}
+                  {property.features.propertyAge && (
+                    <div className="space-y-1">
+                      <p className="text-sm text-muted-foreground">Property Age</p>
+                      <p className="font-serif text-xl font-bold text-foreground">
+                        {property.features.propertyAge}
+                      </p>
+                    </div>
+                  )}
+
+                  {property.features.facing && (
+                    <div className="space-y-1">
+                      <p className="text-sm text-muted-foreground">Facing</p>
+                      <p className="font-serif text-xl font-bold text-foreground">
+                        {property.features.facing}
+                      </p>
+                    </div>
+                  )}
+
+                  {property.features.waterAvailability && (
+                    <div className="space-y-1">
+                      <p className="text-sm text-muted-foreground">Water Availability</p>
+                      <p className="font-serif text-xl font-bold text-foreground">
+                        {property.features.waterAvailability}
+                      </p>
+                    </div>
+                  )}
+
+                  {(property.features.unitsOnFloor !== undefined && property.features.unitsOnFloor > 0) && (
+                    <div className="space-y-1">
+                      <p className="text-sm text-muted-foreground">Units On Floor</p>
+                      <p className="font-serif text-xl font-bold text-foreground">
+                        {property.features.unitsOnFloor}
+                      </p>
+                    </div>
+                  )}
+
+                  {(property.features.lifts !== undefined && property.features.lifts > 0) && (
+                    <div className="space-y-1">
+                      <p className="text-sm text-muted-foreground">Lifts</p>
+                      <p className="font-serif text-xl font-bold text-foreground">
+                        {property.features.lifts}
+                      </p>
+                    </div>
+                  )}
+
+                  {(property.features.maintenanceCharges !== undefined && property.features.maintenanceCharges > 0) && (
+                    <div className="space-y-1">
+                      <p className="text-sm text-muted-foreground">Maintenance Charges</p>
+                      <p className="font-serif text-xl font-bold text-foreground">
+                        ₹{property.features.maintenanceCharges} Monthly
+                      </p>
+                    </div>
+                  )}
                 </div>
               </motion.div>
 
