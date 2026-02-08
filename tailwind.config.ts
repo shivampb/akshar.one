@@ -14,8 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        serif: ["'Cormorant Garamond'", "Georgia", "serif"],
+        serif: ["'Outfit'", "sans-serif"], // Unified font as requested
         sans: ["'Outfit'", "sans-serif"],
+        brand: ["'Cormorant Garamond'", "serif"], // Preserved original serif as 'brand' just in case
       },
       colors: {
         border: "hsl(var(--border))",

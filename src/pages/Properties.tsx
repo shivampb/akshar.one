@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Filter, X } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { PropertyCard } from "@/components/PropertyCard";
 import { CTASection } from "@/components/CTASection";
@@ -20,6 +21,7 @@ const priceRanges = [
 ];
 
 const Properties = () => {
+  const [searchParams] = useSearchParams();
   const [properties, setProperties] = useState<Property[]>([]);
   const [selectedType, setSelectedType] = useState<PropertyType | "All">("All");
   const [selectedPriceRange, setSelectedPriceRange] = useState(0);
@@ -28,6 +30,7 @@ const Properties = () => {
   const [selectedCountry, setSelectedCountry] = useState<string>("All");
   const [selectedState, setSelectedState] = useState<string>("All");
   const [selectedCity, setSelectedCity] = useState<string>("All");
+  const [searchText, setSearchText] = useState<string>("");
 
   const [showFilters, setShowFilters] = useState(false);
 
@@ -42,6 +45,41 @@ const Properties = () => {
     };
     fetchProperties();
   }, []);
+
+  // Read URL parameters and set filters
+  useEffect(() => {
+    const searchParam = searchParams.get("search");
+    const locationParam = searchParams.get("location");
+    const typeParam = searchParams.get("type");
+    const statusParam = searchParams.get("status");
+
+    // Set search text
+    if (searchParam) {
+      setSearchText(searchParam);
+    }
+
+    // Map location string to city (case-insensitive)
+    if (locationParam) {
+      const cityName = locationParam.charAt(0).toUpperCase() + locationParam.slice(1).toLowerCase();
+      setSelectedCity(cityName);
+    }
+
+    // Map type to property type
+    if (typeParam) {
+      const typeMapping: { [key: string]: PropertyType } = {
+        "residential": "Apartment",
+        "commercial": "Commercial",
+        "agricultural": "Plot"
+      };
+      const mappedType = typeMapping[typeParam.toLowerCase()];
+      if (mappedType) {
+        setSelectedType(mappedType);
+      }
+    }
+
+    // Status parameter could be used for future filtering
+    // For now, you can add custom logic based on your needs
+  }, [searchParams]);
 
   const propertyTypes = useMemo(() => ["Apartment", "Villa", "Plot", "Commercial"], []);
 
@@ -108,6 +146,22 @@ const Properties = () => {
 
   const filteredProperties = useMemo(() => {
     return properties.filter((property) => {
+      // Search text filter
+      if (searchText) {
+        const searchLower = searchText.toLowerCase();
+        const matchesSearch =
+          property.name?.toLowerCase().includes(searchLower) ||
+          property.city?.toLowerCase().includes(searchLower) ||
+          property.location?.toLowerCase().includes(searchLower) ||
+          property.shortDescription?.toLowerCase().includes(searchLower) ||
+          property.fullDescription?.toLowerCase().includes(searchLower) ||
+          property.type?.toLowerCase().includes(searchLower);
+
+        if (!matchesSearch) {
+          return false;
+        }
+      }
+
       // Type filter
       if (selectedType !== "All" && property.type !== selectedType) {
         return false;

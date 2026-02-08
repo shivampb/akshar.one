@@ -7,7 +7,10 @@ import { PropertyCard } from "@/components/PropertyCard";
 import { TestimonialCard } from "@/components/TestimonialCard";
 import { CTASection } from "@/components/CTASection";
 import { SectionHeading } from "@/components/SectionHeading";
+import { BlogCard } from "@/components/BlogCard";
+import { HeroSearchBar } from "@/components/HeroSearchBar";
 import { testimonials } from "@/data/testimonials";
+import { blogs } from "@/data/blogs";
 import { supabase } from "@/lib/supabase";
 import { Property } from "@/data/properties";
 import heroImage from "@/assets/hero-home.jpg";
@@ -16,7 +19,26 @@ import property3 from "@/assets/property-3.jpg";
 import useEmblaCarousel from "embla-carousel-react";
 import AutoScroll from "embla-carousel-auto-scroll";
 
-const heroImages = [heroImage, property1, property3];
+
+const heroContent = [
+  {
+    type: "video",
+    src: "https://videos.pexels.com/video-files/3205777/3205777-uhd_2560_1440_25fps.mp4",
+    poster: heroImage
+  },
+  {
+    type: "image",
+    src: heroImage
+  },
+  {
+    type: "image",
+    src: property1
+  },
+  {
+    type: "image",
+    src: property3
+  }
+];
 
 const features = [
   {
@@ -54,14 +76,23 @@ const stats = [
 
 const Home = () => {
   const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
-  // Embla Carousel Hook - Continuous Auto Scroll
+  // Embla Carousel Hook - Continuous Auto Scroll for Properties
   const [emblaRef] = useEmblaCarousel({ loop: true, align: "start" }, [
     AutoScroll({
       speed: 1, // Slow speed
       stopOnInteraction: false,
       stopOnMouseEnter: true // Optional: pause when user hovers
+    }),
+  ]);
+
+  // Embla Carousel Hook - Continuous Auto Scroll for Blogs
+  const [emblaRefBlogs] = useEmblaCarousel({ loop: true, align: "start" }, [
+    AutoScroll({
+      speed: 0.8, // Slightly slower for blogs
+      stopOnInteraction: false,
+      stopOnMouseEnter: true
     }),
   ]);
 
@@ -81,8 +112,8 @@ const Home = () => {
     fetchFeatured();
 
     const timer = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
-    }, 5000);
+      setCurrentSlideIndex((prev) => (prev + 1) % heroContent.length);
+    }, 8000); // 8 seconds for video to play more
     return () => clearInterval(timer);
   }, []);
 
@@ -90,89 +121,127 @@ const Home = () => {
     <Layout>
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
-        {/* Background Image Carousel */}
-        <div className="absolute inset-0 w-full h-full">
+        {/* Background Video/Image Carousel */}
+        <div className="absolute inset-0 w-full h-full bg-black">
           <AnimatePresence mode="popLayout">
-            <motion.img
-              key={currentImageIndex}
-              src={heroImages[currentImageIndex]}
-              initial={{ opacity: 0, scale: 1.1 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 2 }}
-              alt="Luxury property"
-              className="absolute inset-0 w-full h-full object-cover"
-            />
+            {heroContent[currentSlideIndex].type === "video" ? (
+              <motion.div
+                key={`slide-${currentSlideIndex}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1 }}
+                className="absolute inset-0 w-full h-full"
+              >
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-cover"
+                  poster={heroContent[currentSlideIndex].poster}
+                >
+                  <source src={heroContent[currentSlideIndex].src} type="video/mp4" />
+                </video>
+              </motion.div>
+            ) : (
+              <motion.img
+                key={`slide-${currentSlideIndex}`}
+                src={heroContent[currentSlideIndex].src}
+                initial={{ opacity: 0, scale: 1.05 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1.5 }}
+                alt="Luxury property"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            )}
           </AnimatePresence>
-          <div className="absolute inset-0 image-overlay z-10" />
+
+          {/* Subtle overlay */}
+          <div className="absolute inset-0 bg-black/20 z-10" />
         </div>
 
-        {/* Content */}
-        <div className="relative z-10 container-luxury pt-32 pb-20">
-          <div className="max-w-3xl">
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-gold font-medium tracking-widest uppercase text-sm mb-6"
-            >
-              Luxury Real Estate
-            </motion.p>
+        {/* Content - Left Aligned */}
+        <div className="relative z-20 container mx-auto px-6 lg:px-12 pt-32 pb-40">
+          <div className="max-w-2xl">
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium leading-tight mb-6 text-white"
+              transition={{ duration: 0.8 }}
+              className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight"
             >
-              Luxury Properties
-              <br />
-              <span className="text-gold">Designed for Modern Living</span>
+              Discover Luxury Living
             </motion.h1>
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-lg md:text-xl text-white/80 mb-10 max-w-xl"
+              transition={{ duration: 0.8, delay: 0.1 }}
+              className="text-xl md:text-2xl text-white mb-8 font-light"
             >
-              Discover exceptional properties curated for the discerning buyer.
-              Where luxury meets lifestyle.
+              Find your perfect home in our exclusive collection of premium properties.
             </motion.p>
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex flex-col sm:flex-row gap-4"
+              transition={{ duration: 0.8, delay: 0.3 }}
             >
-              <Link to="/properties" className="btn-luxury-gold">
-                View Properties
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Link>
               <Link
-                to="/contact"
-                className="btn-luxury border-2 border-white/30 text-white hover:bg-white/10"
+                to="/properties"
+                className="inline-block bg-white text-black px-8 py-3 rounded-full font-medium hover:bg-white/90 transition-colors"
               >
-                Contact Us
+                Know More
               </Link>
             </motion.div>
           </div>
         </div>
 
-        {/* Scroll Indicator */}
+        {/* Carousel Dots Indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+          transition={{ delay: 0.5 }}
+          className="absolute bottom-28 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2"
         >
-          <span className="text-white/90 text-xs uppercase tracking-widest">
-            Scroll
-          </span>
-          <div className="w-px h-12 bg-gradient-to-b from-white/90 to-transparent" />
+          {heroContent.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlideIndex(index)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${currentSlideIndex === index
+                ? "bg-white w-8"
+                : "bg-white/50 hover:bg-white/70"
+                }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </motion.div>
+
+        {/* Search Bar Overlay - Bottom */}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="absolute bottom-12 left-0 w-full z-20 flex justify-center px-4 md:px-6"
+        >
+          <HeroSearchBar />
+        </motion.div>
+
+        {/* Chat Widget */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 1 }}
+          className="fixed bottom-8 right-8 z-30"
+        >
+          <button className="bg-white text-black px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-shadow flex items-center gap-2 text-sm font-medium">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            Chat with us
+          </button>
         </motion.div>
       </section>
 
       {/* Stats Section */}
-      <section className="bg-primary py-16">
+      <section className="bg-white py-16 border-y border-gray-100">
         <div className="container-luxury">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
@@ -182,12 +251,12 @@ const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-primary-foreground/5 rounded-2xl p-6 text-center backdrop-blur-sm border border-white/10 hover:bg-primary-foreground/10 transition-colors"
+                className="bg-gray-50 rounded-2xl p-6 text-center border border-gray-100 hover:shadow-md transition-all"
               >
-                <p className="font-serif text-3xl md:text-4xl font-semibold text-gold mb-2">
+                <p className="font-serif text-3xl md:text-4xl font-semibold text-black mb-2">
                   {stat.value}
                 </p>
-                <p className="text-primary-foreground/70 text-sm uppercase tracking-wider">
+                <p className="text-gray-600 text-sm uppercase tracking-wider">
                   {stat.label}
                 </p>
               </motion.div>
@@ -299,9 +368,52 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Latest Insights / Blogs Carousel Section */}
+      <section className="section-luxury bg-secondary">
+        <div className="container-luxury">
+          <SectionHeading
+            title="Latest Insights"
+            subtitle="Stay informed with the latest trends, market analysis, and expert advice in luxury real estate."
+          />
+
+          {/* Blogs Carousel */}
+          <div className="overflow-hidden" ref={emblaRefBlogs}>
+            <div className="flex -ml-8">
+              {blogs.map((blog, index) => (
+                <div key={blog.id} className="flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.333%] pl-8 min-w-0">
+                  <BlogCard blog={blog} index={index} />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="text-center mt-12"
+          >
+            <Link
+              to="/blogs"
+              className="inline-flex items-center gap-2 text-gold hover:text-gold-dark font-medium transition-colors group"
+            >
+              View All Insights
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
       {/* CTA Section */}
-      <CTASection variant="dark" backgroundImage={heroImage} />
-    </Layout>
+      <CTASection
+        variant="minimal"
+        title="Looking for dream spaces, not sure where to start?"
+        subtitle="Leave us a query and our representative will get back to you."
+        primaryButtonText="Get in touch"
+        primaryButtonLink="/contact"
+        secondaryButtonText="" // Hides secondary button
+      />
+    </Layout >
   );
 };
 
