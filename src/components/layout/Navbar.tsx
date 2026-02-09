@@ -7,6 +7,7 @@ const navLinks = [
   { name: "Residential", path: "/properties" },
   { name: "Commercial & Retail", path: "/properties" },
   { name: "Clubs", path: "/about" },
+  { name: "Insights", path: "/blogs" },
 ];
 
 const connectOptions = [

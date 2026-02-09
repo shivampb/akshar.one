@@ -20,9 +20,9 @@ export const HeroSearchBar = () => {
     };
 
     return (
-        <div className="bg-white rounded-full shadow-2xl p-1.5 flex flex-col md:flex-row items-stretch md:items-center gap-1.5 max-w-3xl w-full mx-auto">
+        <div className="bg-white rounded-3xl md:rounded-full shadow-2xl p-1.5 flex flex-col md:flex-row items-stretch md:items-center gap-1.5 max-w-3xl w-full mx-auto">
             {/* Location */}
-            <div className="flex-1 px-4 py-1.5 md:py-1">
+            <div className="flex-1 px-4 py-2 md:py-1">
                 <label className="block text-[10px] font-medium text-gray-500 mb-0.5 uppercase tracking-wide">Location</label>
                 <select
                     value={location}
@@ -44,7 +44,7 @@ export const HeroSearchBar = () => {
             <div className="hidden md:block w-px h-8 bg-gray-200"></div>
 
             {/* Type */}
-            <div className="flex-1 px-4 py-1.5 md:py-1">
+            <div className="flex-1 px-4 py-2 md:py-1">
                 <label className="block text-[10px] font-medium text-gray-500 mb-0.5 uppercase tracking-wide">Type</label>
                 <select
                     value={propertyType}
@@ -61,7 +61,7 @@ export const HeroSearchBar = () => {
             {/* Search Button */}
             <button
                 onClick={handleSearch}
-                className="btn-luxury-blue text-white px-8 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                className="btn-luxury-blue text-white px-8 py-3 md:py-2.5 rounded-full font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
             >
                 Search
             </button>

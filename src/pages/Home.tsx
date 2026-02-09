@@ -17,7 +17,6 @@ import heroImage from "@/assets/hero-home.jpg";
 import property1 from "@/assets/property-1.jpg";
 import property3 from "@/assets/property-3.jpg";
 import useEmblaCarousel from "embla-carousel-react";
-import AutoScroll from "embla-carousel-auto-scroll";
 
 
 const heroContent = [
@@ -79,22 +78,10 @@ const Home = () => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
   // Embla Carousel Hook - Continuous Auto Scroll for Properties
-  const [emblaRef] = useEmblaCarousel({ loop: true, align: "start" }, [
-    AutoScroll({
-      speed: 1, // Slow speed
-      stopOnInteraction: false,
-      stopOnMouseEnter: true // Optional: pause when user hovers
-    }),
-  ]);
+  const [emblaRef] = useEmblaCarousel({ loop: true, align: "start" });
 
   // Embla Carousel Hook - Continuous Auto Scroll for Blogs
-  const [emblaRefBlogs] = useEmblaCarousel({ loop: true, align: "start" }, [
-    AutoScroll({
-      speed: 0.8, // Slightly slower for blogs
-      stopOnInteraction: false,
-      stopOnMouseEnter: true
-    }),
-  ]);
+  const [emblaRefBlogs] = useEmblaCarousel({ loop: true, align: "start" });
 
   useEffect(() => {
     const fetchFeatured = async () => {
@@ -163,13 +150,13 @@ const Home = () => {
         </div>
 
         {/* Content - Left Aligned */}
-        <div className="relative z-20 container mx-auto px-6 lg:px-12 pt-32 pb-40">
+        <div className="relative z-20 container mx-auto px-6 lg:px-12 pt-32 pb-20 md:pb-40">
           <div className="max-w-2xl">
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight"
+              className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight"
             >
               Discover Luxury Living
             </motion.h1>
@@ -177,7 +164,7 @@ const Home = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.1 }}
-              className="text-xl md:text-2xl text-white mb-8 font-light"
+              className="text-lg md:text-2xl text-white mb-8 font-light"
             >
               Find your perfect home in our exclusive collection of premium properties.
             </motion.p>
@@ -201,7 +188,7 @@ const Home = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="absolute bottom-28 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2"
+          className="absolute bottom-12 right-6 md:bottom-28 md:right-auto md:left-1/2 md:-translate-x-1/2 z-20 flex items-center gap-2"
         >
           {heroContent.map((_, index) => (
             <button
@@ -216,12 +203,12 @@ const Home = () => {
           ))}
         </motion.div>
 
-        {/* Search Bar Overlay - Bottom */}
+        {/* Search Bar Overlay - Responsive Position */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="absolute bottom-12 left-0 w-full z-20 flex justify-center px-4 md:px-6"
+          className="absolute left-0 w-full z-20 flex justify-center px-4 md:px-6 bottom-24 md:bottom-12"
         >
           <HeroSearchBar />
         </motion.div>
@@ -231,7 +218,7 @@ const Home = () => {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 1 }}
-          className="fixed bottom-8 right-8 z-30"
+          className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-30"
         >
           <button className="bg-white text-black px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-shadow flex items-center gap-2 text-sm font-medium">
             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
@@ -273,22 +260,11 @@ const Home = () => {
             subtitle="Explore our handpicked selection of extraordinary homes, each offering unparalleled luxury and exceptional value."
           />
 
-          {/* Mobile View: Grid Limit 3 */}
-          <div className="block md:hidden grid grid-cols-1 gap-8">
-            {featuredProperties.slice(0, 3).map((property, index) => (
-              <PropertyCard
-                key={property.id}
-                property={property}
-                index={index}
-              />
-            ))}
-          </div>
-
-          {/* Desktop/Tablet View: Carousel */}
-          <div className="hidden md:block overflow-hidden" ref={emblaRef}>
+          {/* Featured Properties Carousel - Responsive */}
+          <div className="overflow-hidden" ref={emblaRef}>
             <div className="flex -ml-4">
               {featuredProperties.map((property, index) => (
-                <div key={property.id} className="flex-[0_0_50%] lg:flex-[0_0_33.333%] pl-4 min-w-0">
+                <div key={property.id} className="flex-[0_0_85%] md:flex-[0_0_50%] lg:flex-[0_0_33.333%] pl-4 min-w-0">
                   <PropertyCard
                     property={property}
                     index={index}
@@ -380,7 +356,7 @@ const Home = () => {
           <div className="overflow-hidden" ref={emblaRefBlogs}>
             <div className="flex -ml-8">
               {blogs.map((blog, index) => (
-                <div key={blog.id} className="flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.333%] pl-8 min-w-0">
+                <div key={blog.id} className="flex-[0_0_85%] md:flex-[0_0_50%] lg:flex-[0_0_33.333%] pl-8 min-w-0">
                   <BlogCard blog={blog} index={index} />
                 </div>
               ))}

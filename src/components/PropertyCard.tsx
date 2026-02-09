@@ -66,13 +66,8 @@ export const PropertyCard = ({ property, index = 0 }: PropertyCardProps) => {
             {property.name}
           </h3>
 
-          {/* Description */}
-          <p className="text-muted-foreground text-sm line-clamp-2 mb-4">
-            {property.shortDescription}
-          </p>
-
           {/* Features */}
-          <div className="flex items-center gap-4 pb-4 mb-4 border-b border-border">
+          <div className="flex items-center gap-4 pb-4 border-b border-border">
             {/* Show Bed/Bath only for Residential */}
             {(property.category === "Residential" ||
               ["Apartment", "Villa", "Bungalow"].includes(property.type) ||
@@ -92,16 +87,6 @@ export const PropertyCard = ({ property, index = 0 }: PropertyCardProps) => {
               <Square className="w-4 h-4" />
               <span>{property.features.area.toLocaleString()} sqft</span>
             </div>
-          </div>
-
-          {/* Price */}
-          <div className="flex items-center justify-between">
-            <span className="font-serif text-xl font-semibold text-foreground">
-              {formatPrice(property.price)}
-            </span>
-            <span className="text-xs text-muted-foreground uppercase tracking-wider">
-              Starting Price
-            </span>
           </div>
         </div>
       </Link>
