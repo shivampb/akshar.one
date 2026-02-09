@@ -55,3 +55,27 @@ insert into public.categories (name, slug) values
 ('Design', 'design'),
 ('Property Guide', 'property-guide')
 on conflict (slug) do nothing;
+
+-- Add new columns to properties table
+DO $$ 
+BEGIN 
+    -- Add possession_date if not exists
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'properties' AND column_name = 'possession_date') THEN
+        ALTER TABLE properties ADD COLUMN possession_date TEXT;
+    END IF;
+
+    -- Add brochure_url if not exists
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'properties' AND column_name = 'brochure_url') THEN
+        ALTER TABLE properties ADD COLUMN brochure_url TEXT;
+    END IF;
+
+    -- Add area_name if not exists
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'properties' AND column_name = 'area_name') THEN
+        ALTER TABLE properties ADD COLUMN area_name TEXT;
+    END IF;
+
+    -- Add possession_status if not exists
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'properties' AND column_name = 'possession_status') THEN
+        ALTER TABLE properties ADD COLUMN possession_status TEXT;
+    END IF;
+END $$;

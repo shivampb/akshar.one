@@ -83,13 +83,42 @@ export const BasicDetailsSection = () => {
                 )}
             </div>
 
-            <div className="space-y-2 col-span-2">
-                <Label htmlFor="price">Price</Label>
-                <Input
-                    id="price"
-                    type="number"
-                    {...register("price", { valueAsNumber: true })}
-                />
+            <div className="space-y-3 col-span-2">
+                <div className="flex items-center justify-between">
+                    <Label htmlFor="price">Price</Label>
+                    <div className="flex items-center space-x-2">
+                        <input
+                            type="checkbox"
+                            id="price_on_request"
+                            {...register("price_on_request")}
+                            onChange={(e) => {
+                                setValue("price_on_request", e.target.checked);
+                                if (e.target.checked) {
+                                    setValue("price", 0);
+                                }
+                            }}
+                            className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary"
+                        />
+                        <label htmlFor="price_on_request" className="text-sm text-muted-foreground cursor-pointer">
+                            Price on Request
+                        </label>
+                    </div>
+                </div>
+
+                {!watch("price_on_request") && (
+                    <Input
+                        id="price"
+                        type="number"
+                        placeholder="Enter price"
+                        {...register("price", { valueAsNumber: true })}
+                    />
+                )}
+
+                {watch("price_on_request") && (
+                    <div className="p-3 bg-secondary/20 rounded-md border border-border text-sm text-muted-foreground">
+                        Price will be displayed as "Price on Request"
+                    </div>
+                )}
             </div>
 
         </div>

@@ -1,7 +1,10 @@
-import { useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useFormContext } from "react-hook-form";
 import { Country, State, City } from "country-state-city";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Plus, List } from "lucide-react";
 import {
     Select,
     SelectContent,
@@ -11,12 +14,17 @@ import {
 } from "@/components/ui/select";
 import { PropertyFormValues } from "./schema";
 
+import { CITY_AREAS, COMMON_AREAS } from "@/data/cityAreas";
+
+
 export const LocationSection = () => {
-    const { setValue, watch, formState: { errors } } = useFormContext<PropertyFormValues>();
+    const { setValue, watch, register, formState: { errors } } = useFormContext<PropertyFormValues>();
+    const [isManualArea, setIsManualArea] = useState(false);
 
     // Watch fields to handle dependencies
     const selectedCountryCode = watch("country");
     const selectedStateCode = watch("state");
+    const selectedArea = watch("area_name");
 
     // Get all countries - Memoized
     const countries = useMemo(() => Country.getAllCountries(), []);
@@ -46,6 +54,24 @@ export const LocationSection = () => {
 
     // Update the main 'location' field whenever City, State or Country changes
     const selectedCity = watch("city");
+
+    // Get available areas based on selected city
+    const availableAreas = useMemo(() => {
+        if (!selectedCity) return [];
+        return CITY_AREAS[selectedCity] || COMMON_AREAS;
+    }, [selectedCity]);
+
+    // Check if current area is custom on load/change
+    useEffect(() => {
+        if (selectedArea && availableAreas.length > 0) {
+            const isCustom = !availableAreas.includes(selectedArea);
+            if (isCustom && !isManualArea) {
+                setIsManualArea(true);
+            }
+        }
+    }, [selectedArea, availableAreas]);
+
+
     useEffect(() => {
         if (selectedCountryCode && selectedStateCode && selectedCity) {
             const country = countries.find(c => c.isoCode === selectedCountryCode)?.name;
@@ -57,6 +83,9 @@ export const LocationSection = () => {
 
     return (
         <div className="grid grid-cols-3 gap-4">
+
+            {/* ... Country and State Selects remain unchanged ... */}
+
             <div className="space-y-2">
                 <Label htmlFor="country">Country</Label>
                 <Select
@@ -134,6 +163,64 @@ export const LocationSection = () => {
                 </Select>
                 {errors.city && (
                     <p className="text-red-500 text-sm">{errors.city.message}</p>
+                )}
+            </div>
+
+            <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                    <Label htmlFor="area_name">Area</Label>
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-auto p-0 text-xs text-primary hover:text-primary/80"
+                        onClick={() => {
+                            if (!isManualArea) setValue("area_name", ""); // Clear value when switching to manual
+                            setIsManualArea(!isManualArea);
+                        }}
+                        disabled={!selectedCity}
+                    >
+                        {isManualArea ? (
+                            <span className="flex items-center gap-1"><List className="w-3 h-3" /> Select from list</span>
+                        ) : (
+                            <span className="flex items-center gap-1"><Plus className="w-3 h-3" /> Add new</span>
+                        )}
+                    </Button>
+                </div>
+
+                {isManualArea ? (
+                    <Input
+                        id="area_name"
+                        {...register("area_name")}
+                        placeholder="Enter custom area name"
+                        disabled={!selectedCity}
+                    />
+                ) : (
+                    <Select
+                        onValueChange={(value) => setValue("area_name", value)}
+                        value={watch("area_name")}
+                        disabled={!selectedCity}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder={selectedCity ? "Select Area" : "Select City First"} />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {availableAreas.length > 0 ? (
+                                availableAreas.map((area) => (
+                                    <SelectItem key={area} value={area}>
+                                        {area}
+                                    </SelectItem>
+                                ))
+                            ) : (
+                                <SelectItem value="default" disabled>No areas available</SelectItem>
+                            )}
+                        </SelectContent>
+                    </Select>
+                )}
+
+                {/* Helper text if using generic areas */}
+                {!isManualArea && selectedCity && !CITY_AREAS[selectedCity] && (
+                    <p className="text-xs text-muted-foreground mt-1">Generic areas shown for this city.</p>
                 )}
             </div>
         </div>

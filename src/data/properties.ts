@@ -30,20 +30,13 @@ export interface Property {
   address: string;
   price: number;
   priceLabel: string;
+  price_on_request?: boolean;
   shortDescription: string;
   fullDescription: string;
   images: string[];
   features: {
     area: number;
-    bedrooms: number;
-    bathrooms: number;
-    parking: number;
-    maintenanceCharges?: number;
-    propertyAge?: string;
-    unitsOnFloor?: number;
-    lifts?: number;
     facing?: string;
-    waterAvailability?: string;
   };
   amenities: string[];
   isFeatured: boolean;
@@ -54,6 +47,21 @@ export interface Property {
     lat: number;
     lng: number;
   };
+  // Project Specifications
+  project_units?: string;
+  project_area?: string;
+  size_range?: string;
+  project_size?: string;
+  launch_date?: string;
+  possession_date?: string;
+  avg_price?: string;
+  configuration?: string;
+  rera_id?: string;
+  brochure_url?: string;
+  possession_status?: string;
+  area_name?: string;
+  map_url?: string;
+  faqs?: { question: string; answer: string; }[];
 }
 
 export const properties: Property[] = [
@@ -71,9 +79,6 @@ export const properties: Property[] = [
     images: [property1, property1, property1],
     features: {
       area: 4200,
-      bedrooms: 4,
-      bathrooms: 5,
-      parking: 2,
     },
     amenities: [
       "24/7 Concierge",
@@ -105,9 +110,6 @@ export const properties: Property[] = [
     images: [property2, property2, property2],
     features: {
       area: 8500,
-      bedrooms: 6,
-      bathrooms: 7,
-      parking: 4,
     },
     amenities: [
       "Infinity Pool",
@@ -139,9 +141,6 @@ export const properties: Property[] = [
     images: [property3, property3, property3],
     features: {
       area: 5800,
-      bedrooms: 5,
-      bathrooms: 6,
-      parking: 0,
     },
     amenities: [
       "Private Beach",
@@ -173,9 +172,6 @@ export const properties: Property[] = [
     images: [property4, property4, property4],
     features: {
       area: 11000,
-      bedrooms: 7,
-      bathrooms: 9,
-      parking: 3,
     },
     amenities: [
       "Ski-in/Ski-out",
@@ -207,9 +203,6 @@ export const properties: Property[] = [
     images: [property5, property5, property5],
     features: {
       area: 4500,
-      bedrooms: 3,
-      bathrooms: 3,
-      parking: 1,
     },
     amenities: [
       "Original Details",
@@ -241,9 +234,6 @@ export const properties: Property[] = [
     images: [property6, property6, property6],
     features: {
       area: 15000,
-      bedrooms: 10,
-      bathrooms: 12,
-      parking: 6,
     },
     amenities: [
       "Private Vineyard",
@@ -260,6 +250,7 @@ export const properties: Property[] = [
       lat: 45.1987,
       lng: -0.7501,
     },
+    brochure_url: undefined
   },
 ];
 

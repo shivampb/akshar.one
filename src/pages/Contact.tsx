@@ -17,7 +17,7 @@ const contactInfo = [
   {
     icon: Mail,
     title: "Email Us",
-    details: ["hello@estateluxe.com", "sales@estateluxe.com"],
+    details: ["hello@aksharone.com", "sales@aksharone.com"],
   },
   {
     icon: Clock,

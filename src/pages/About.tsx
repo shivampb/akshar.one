@@ -33,7 +33,7 @@ const values = [
 ];
 
 const milestones = [
-  { year: "2008", title: "Founded", description: "EstateLuxe was established with a vision for luxury real estate" },
+  { year: "2008", title: "Founded", description: "Akshar One was established with a vision for luxury real estate" },
   { year: "2012", title: "First ₹100M", description: "Reached our first ₹100 million in property sales" },
   { year: "2016", title: "Global Expansion", description: "Expanded operations to international markets" },
   { year: "2020", title: "₹1B Milestone", description: "Surpassed ₹1 billion in total property sales" },
@@ -106,7 +106,7 @@ const About = () => {
               <div className="gold-line mb-6 mx-0" />
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  EstateLuxe was founded with a singular vision: to transform
+                  Akshar One was founded with a singular vision: to transform
                   the luxury real estate experience. What began as a boutique
                   agency has evolved into a globally recognized brand, known for
                   exceptional service and an unparalleled portfolio of premium
@@ -281,7 +281,7 @@ const About = () => {
         <div className="container-luxury">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="font-serif text-3xl md:text-4xl font-medium mb-8">
-              Why Trust EstateLuxe?
+              Why Trust Akshar One?
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
               {[

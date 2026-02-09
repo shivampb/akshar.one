@@ -34,16 +34,16 @@ const connectOptions = [
   {
     icon: Mail,
     title: "Share with us",
-    subtitle: "share@estateluxe.com",
+    subtitle: "share@aksharone.com",
     action: "email",
-    link: "mailto:share@estateluxe.com"
+    link: "mailto:share@aksharone.com"
   },
   {
     icon: Users,
     title: "Partner with Us",
-    subtitle: "partner@estateluxe.com",
+    subtitle: "partner@aksharone.com",
     action: "email",
-    link: "mailto:partner@estateluxe.com"
+    link: "mailto:partner@aksharone.com"
   }
 ];
 
@@ -98,6 +98,10 @@ export const Navbar = () => {
     ? "text-black hover:bg-gray-100"
     : "text-white hover:bg-white/10";
 
+  const buttonClasses = useScrolledStyle
+    ? "bg-blue-600 text-white hover:bg-blue-700"
+    : "bg-white text-black hover:bg-white/90";
+
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navbarClasses}`}>
       <nav className="container mx-auto px-4 lg:px-8 flex items-center justify-between">
@@ -112,7 +116,7 @@ export const Navbar = () => {
           </button>
           <Link to="/" className="flex items-center gap-2">
             <span className={`text-xl md:text-2xl font-light ${logoTextClasses}`}>
-              Estate<span className={logoSubTextClasses}> | Luxe</span>
+              Akshar<span className={logoSubTextClasses}> | One</span>
             </span>
           </Link>
         </div>
@@ -210,7 +214,7 @@ export const Navbar = () => {
           {/* Enquire Now Button */}
           <Link
             to="/contact"
-            className="bg-white text-black text-xs md:text-sm font-medium px-4 md:px-6 py-2 md:py-2.5 rounded hover:bg-white/90 transition-colors"
+            className={`${buttonClasses} text-xs md:text-sm font-medium px-4 md:px-6 py-2 md:py-2.5 rounded transition-colors`}
           >
             Enquire Now
           </Link>
@@ -249,7 +253,7 @@ export const Navbar = () => {
                   {/* Logo */}
                   <Link to="/" className="block mb-8">
                     <span className="text-foreground text-xl font-light">
-                      Estate<span className="text-muted-foreground"> | Luxe</span>
+                      Akshar<span className="text-muted-foreground"> | One</span>
                     </span>
                   </Link>
 

@@ -30,11 +30,15 @@ export const AddressSection = () => {
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="mapUrl">Google Maps Link (Optional)</Label>
+                <Label htmlFor="map_url">Google Maps Link (Optional)</Label>
                 <Input
-                    id="mapUrl"
+                    id="map_url"
                     placeholder="Paste Google Maps URL (@lat,lng) to precise location..."
-                    onChange={handleMapUrlChange}
+                    {...register("map_url")}
+                    onChange={(e) => {
+                        setValue("map_url", e.target.value);
+                        handleMapUrlChange(e);
+                    }}
                 />
                 <p className="text-xs text-muted-foreground">
                     Pasting a Google Maps link like ".../place/.../@40.712,-74.006,17z" will auto-save accurate coordinates.

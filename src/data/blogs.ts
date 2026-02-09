@@ -24,7 +24,7 @@ export const blogs: Blog[] = [
         category: "Property Guide",
         date: "December 12, 2025",
         image: "https://images.unsplash.com/photo-1664575602276-acd073f104c1?q=80&w=2070&auto=format&fit=crop",
-        author: "Estate Luxe Team",
+        author: "Akshar One Team",
         content: `
 **Top Real Estate Trends & Forecasts in 2026:**
 

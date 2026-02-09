@@ -25,8 +25,8 @@ export const Footer = () => {
           <div className="lg:col-span-1">
             <Link to="/" className="inline-block mb-6">
               <h2 className="font-serif text-2xl font-semibold">
-                <span className="text-gray-900">Estate</span>
-                <span className="text-blue-600">Luxe</span>
+                <span className="text-gray-900">Akshar</span>
+                <span className="text-blue-600">One</span>
               </h2>
             </Link>
             <p className="text-gray-600 text-sm leading-relaxed mb-6">
@@ -119,10 +119,10 @@ export const Footer = () => {
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-blue-600 shrink-0" />
                 <a
-                  href="mailto:hello@estateluxe.com"
+                  href="mailto:hello@aksharone.com"
                   className="text-sm text-gray-600 hover:text-blue-600 transition-colors"
                 >
-                  hello@estateluxe.com
+                  hello@aksharone.com
                 </a>
               </li>
             </ul>
@@ -133,7 +133,7 @@ export const Footer = () => {
         <div className="mt-16 pt-8 border-t border-gray-200">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-gray-500">
-              © {new Date().getFullYear()} EstateLuxe. All rights reserved.
+              © {new Date().getFullYear()} Akshar One. All rights reserved.
             </p>
             <p className="text-xs text-gray-500">
               Designed with excellence in mind

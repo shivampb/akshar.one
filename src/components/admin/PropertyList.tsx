@@ -43,6 +43,9 @@ export const PropertyList = ({ properties, onEdit, onDelete }: PropertyListProps
                                 <TableHead>Type</TableHead>
                                 <TableHead>Location</TableHead>
                                 <TableHead>Price</TableHead>
+                                <TableHead>Configuration</TableHead>
+                                <TableHead>Possession Date</TableHead>
+                                <TableHead>Possession Status</TableHead>
                                 <TableHead>Status</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
@@ -53,7 +56,12 @@ export const PropertyList = ({ properties, onEdit, onDelete }: PropertyListProps
                                     <TableCell className="font-medium whitespace-nowrap">{property.name}</TableCell>
                                     <TableCell>{property.type}</TableCell>
                                     <TableCell>{property.location}</TableCell>
-                                    <TableCell className="whitespace-nowrap">{formatPrice(property.price)}</TableCell>
+                                    <TableCell className="whitespace-nowrap">
+                                        {property.price_on_request ? "Price on Request" : formatPrice(property.price)}
+                                    </TableCell>
+                                    <TableCell>{property.configuration || "-"}</TableCell>
+                                    <TableCell>{property.possession_date || "-"}</TableCell>
+                                    <TableCell>{property.possession_status || "-"}</TableCell>
                                     <TableCell>
                                         <Badge variant={property.isFeatured ? "default" : "secondary"}>
                                             {property.isFeatured ? "Featured" : "Standard"}

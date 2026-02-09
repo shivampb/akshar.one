@@ -16,11 +16,14 @@ import {
 
 import { propertySchema, PropertyFormValues } from "./property-form/schema";
 import { BasicDetailsSection } from "./property-form/BasicDetailsSection";
+import { ProjectSpecsSection } from "./property-form/ProjectSpecsSection";
 import { AddressSection } from "./property-form/AddressSection";
 import { DescriptionSection } from "./property-form/DescriptionSection";
 import { ImageUploadSection } from "./property-form/ImageUploadSection";
 import { FeaturesSection } from "./property-form/FeaturesSection";
 import { LocationSection } from "./property-form/LocationSection";
+import { BrochureUploadSection } from "./property-form/BrochureUploadSection";
+import { FAQSection } from "./property-form/FAQSection";
 
 interface PropertyDialogProps {
     open: boolean;
@@ -49,7 +52,7 @@ export const PropertyDialog = ({
             category: "Residential",
             type: "Apartment",
             isFeatured: false,
-            features: { area: 0, bedrooms: 0, bathrooms: 0, parking: 0 },
+            features: { area: 0 },
             images: [],
             coordinates: { lat: 0, lng: 0 },
             country: "",
@@ -75,6 +78,23 @@ export const PropertyDialog = ({
                 country: editingProperty.country || "",
                 state: editingProperty.state || "",
                 city: editingProperty.city || "",
+                // Project Specs
+                project_units: editingProperty.project_units || "",
+                project_area: editingProperty.project_area || "",
+                size_range: editingProperty.size_range || "",
+                project_size: editingProperty.project_size || "",
+                launch_date: editingProperty.launch_date || "",
+                possession_date: editingProperty.possession_date || "",
+                avg_price: editingProperty.avg_price || "",
+                configuration: editingProperty.configuration || "",
+                rera_id: editingProperty.rera_id || "",
+                brochure_url: editingProperty.brochure_url || "",
+                possession_status: editingProperty.possession_status || "",
+                area_name: editingProperty.area_name || "",
+                map_url: editingProperty.map_url || "",
+                faqs: editingProperty.faqs || [],
+                price_on_request: editingProperty.price_on_request || false,
+                amenities: editingProperty.amenities || [],
             });
         } else {
             form.reset({
@@ -83,18 +103,29 @@ export const PropertyDialog = ({
                 isFeatured: false,
                 features: {
                     area: 0,
-                    bedrooms: 0,
-                    bathrooms: 0,
-                    parking: 0,
-                    maintenanceCharges: 0,
-                    unitsOnFloor: 0,
-                    lifts: 0,
+                    facing: "",
                 },
                 images: [],
                 coordinates: { lat: 0, lng: 0 },
                 country: "",
                 state: "",
                 city: "",
+                // Project Specs
+                project_units: "",
+                project_area: "",
+                size_range: "",
+                project_size: "",
+                launch_date: "",
+                possession_date: "",
+                avg_price: "",
+                configuration: "",
+                rera_id: "",
+                brochure_url: "",
+                possession_status: "",
+                area_name: "",
+                map_url: "",
+                faqs: [],
+                price_on_request: false,
                 amenities: [],
             });
         }
@@ -125,6 +156,23 @@ export const PropertyDialog = ({
             country: data.country,
             state: data.state,
             city: data.city,
+
+            // Project Specs
+            project_units: data.project_units,
+            project_area: data.project_area,
+            size_range: data.size_range,
+            project_size: data.project_size,
+            launch_date: data.launch_date,
+            possession_date: data.possession_date,
+            avg_price: data.avg_price,
+            configuration: data.configuration,
+            rera_id: data.rera_id,
+            brochure_url: data.brochure_url,
+            possession_status: data.possession_status,
+            area_name: data.area_name,
+            map_url: data.map_url,
+            faqs: data.faqs,
+            price_on_request: data.price_on_request,
         };
 
         if (editingProperty) {
@@ -161,23 +209,31 @@ export const PropertyDialog = ({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>{editingProperty ? "Edit Property" : "Add Property"}</DialogTitle>
                 </DialogHeader>
 
                 <FormProvider {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 py-4">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {/* Left Column */}
+                            <div className="space-y-6">
+                                <BasicDetailsSection />
+                                <LocationSection />
+                                <AddressSection />
+                                <DescriptionSection />
+                                <FeaturesSection />
+                            </div>
 
-                        <BasicDetailsSection />
-
-                        <LocationSection />
-
-                        <AddressSection />
-
-                        <DescriptionSection /> <ImageUploadSection />
-
-                        <FeaturesSection />
+                            {/* Right Column */}
+                            <div className="space-y-6">
+                                <ProjectSpecsSection />
+                                <ImageUploadSection />
+                                <BrochureUploadSection />
+                                <FAQSection />
+                            </div>
+                        </div>
 
                         <Button type="submit" className="w-full">
                             {editingProperty ? "Update Property" : "Create Property"}
