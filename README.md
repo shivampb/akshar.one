@@ -2,7 +2,7 @@
 
 ## Project info
 
-This project is a luxury real estate application.
+This project is a luxury real estate application with advanced property management features.
 
 ## Getting Started
 
@@ -16,6 +16,16 @@ This project is a luxury real estate application.
    npm run dev
    ```
 
+## Features
+
+- Property listings with detailed views
+- Admin dashboard for property management
+- Photo & video galleries
+- Interactive maps integration
+- RERA ID management
+- SEO optimization
+- Blog management system
+
 ## Technologies
 
 - Vite
@@ -23,3 +33,5 @@ This project is a luxury real estate application.
 - React
 - shadcn-ui
 - Tailwind CSS
+- Framer Motion
+- Supabase
