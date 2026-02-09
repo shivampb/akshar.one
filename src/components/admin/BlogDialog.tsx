@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Blog } from "@/data/blogs";
 import {
     Dialog,
@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/lib/supabase";
 import imageCompression from "browser-image-compression";
-import { Loader2, Upload, AlertCircle } from "lucide-react";
+import { Loader2, Upload, AlertCircle, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 
@@ -52,6 +52,41 @@ export const BlogDialog = ({ open, onOpenChange, editingBlog, onSuccess }: BlogD
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [viewMode, setViewMode] = useState<"edit" | "preview">("edit");
     const [activeTab, setActiveTab] = useState("content");
+
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const contentImageInputRef = useRef<HTMLInputElement>(null);
+
+    const handleContentImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setIsSubmitting(true);
+            try {
+                const url = await uploadImage(file);
+                const imageMarkdown = `\n![Blog Image](${url})\n`;
+
+                if (textareaRef.current) {
+                    const start = textareaRef.current.selectionStart;
+                    const end = textareaRef.current.selectionEnd;
+                    const newContent = content.substring(0, start) + imageMarkdown + content.substring(end);
+                    setContent(newContent);
+
+                    // Restore focus and cursor position
+                    setTimeout(() => {
+                        textareaRef.current?.focus();
+                        textareaRef.current?.setSelectionRange(start + imageMarkdown.length, start + imageMarkdown.length);
+                    }, 0);
+                } else {
+                    setContent(prev => prev + imageMarkdown);
+                }
+                toast.success("Image inserted!");
+            } catch (error) {
+                toast.error("Failed to upload image");
+            } finally {
+                setIsSubmitting(false);
+                if (contentImageInputRef.current) contentImageInputRef.current.value = '';
+            }
+        }
+    };
 
     useEffect(() => {
         if (open) {
@@ -105,8 +140,8 @@ export const BlogDialog = ({ open, onOpenChange, editingBlog, onSuccess }: BlogD
     const uploadImage = async (file: File) => {
         try {
             const options = {
-                maxSizeMB: 1,
-                maxWidthOrHeight: 1920,
+                maxSizeMB: 0.5,
+                maxWidthOrHeight: 1200,
                 useWebWorker: true,
             };
             const compressedFile = await imageCompression(file, options);
@@ -302,36 +337,60 @@ export const BlogDialog = ({ open, onOpenChange, editingBlog, onSuccess }: BlogD
 
                                     <div className="space-y-2">
                                         <Label htmlFor="content">Content (Markdown) <span className="text-destructive">*</span></Label>
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <Button
-                                                type="button"
-                                                variant={viewMode === 'edit' ? 'default' : 'ghost'}
-                                                size="sm"
-                                                onClick={() => setViewMode('edit')}
-                                            >
-                                                Write
-                                            </Button>
-                                            <Button
-                                                type="button"
-                                                variant={viewMode === 'preview' ? 'default' : 'ghost'}
-                                                size="sm"
-                                                onClick={() => setViewMode('preview')}
-                                            >
-                                                Preview
-                                            </Button>
+                                        <div className="flex items-center justify-between mb-2">
+                                            <div className="flex items-center gap-2">
+                                                <Button
+                                                    type="button"
+                                                    variant={viewMode === 'edit' ? 'default' : 'ghost'}
+                                                    size="sm"
+                                                    onClick={() => setViewMode('edit')}
+                                                >
+                                                    Write
+                                                </Button>
+                                                <Button
+                                                    type="button"
+                                                    variant={viewMode === 'preview' ? 'default' : 'ghost'}
+                                                    size="sm"
+                                                    onClick={() => setViewMode('preview')}
+                                                >
+                                                    Preview
+                                                </Button>
+                                            </div>
+                                            {viewMode === 'edit' && (
+                                                <>
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        className="hidden"
+                                                        ref={contentImageInputRef}
+                                                        onChange={handleContentImageSelect}
+                                                    />
+                                                    <Button
+                                                        type="button"
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => contentImageInputRef.current?.click()}
+                                                        title="Insert Image"
+                                                    >
+                                                        <ImageIcon className="w-4 h-4 mr-2" />
+                                                        Insert Image
+                                                    </Button>
+                                                </>
+                                            )}
                                         </div>
 
                                         {viewMode === 'edit' ? (
                                             <Textarea
                                                 id="content"
+                                                ref={textareaRef}
                                                 value={content}
                                                 onChange={(e) => setContent(e.target.value)}
-                                                className="font-mono min-h-[300px]"
+                                                className="font-mono h-[500px] resize-none overflow-y-auto"
                                                 placeholder="# Write your blog content here..."
                                                 required
                                             />
                                         ) : (
-                                            <div className="border rounded-md p-4 min-h-[300px] prose prose-sm max-w-none dark:prose-invert overflow-y-auto bg-muted/50">
+                                            <div className="border rounded-md p-4 h-[500px] prose prose-sm max-w-none dark:prose-invert overflow-y-auto bg-muted/50">
                                                 <ReactMarkdown>{content}</ReactMarkdown>
                                             </div>
                                         )}
