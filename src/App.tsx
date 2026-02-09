@@ -17,10 +17,28 @@ import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
-import { HelmetProvider } from "react-helmet-async";
+import { HelmetProvider, Helmet } from "react-helmet-async";
 
 const App = () => (
   <HelmetProvider>
+    <Helmet>
+      <title>EstateLuxe | Luxury Real Estate Properties</title>
+      <meta name="description" content="Discover exceptional luxury properties curated for discerning buyers. Premium villas, penthouses, and estates in prime locations worldwide. Experience real estate at its finest." />
+      <meta name="keywords" content="luxury real estate, premium properties, luxury homes, villas, penthouses, estates, high-end properties" />
+      <meta name="author" content="EstateLuxe" />
+      {/* Open Graph / Facebook */}
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content="https://estateluxe.com/" />
+      <meta property="og:title" content="EstateLuxe | Luxury Real Estate Properties" />
+      <meta property="og:description" content="Discover exceptional luxury properties curated for discerning buyers. Premium villas, penthouses, and estates in prime locations worldwide." />
+      <meta property="og:image" content="/og-image.jpg" />
+      {/* Twitter */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:site" content="@EstateLuxe" />
+      <meta name="twitter:title" content="EstateLuxe | Luxury Real Estate Properties" />
+      <meta name="twitter:description" content="Discover exceptional luxury properties curated for discerning buyers. Premium villas, penthouses, and estates in prime locations worldwide." />
+      <meta name="twitter:image" content="/og-image.jpg" />
+    </Helmet>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
