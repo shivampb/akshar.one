@@ -68,7 +68,10 @@ const Admin = () => {
                 category: item.categories?.name || "Uncategorized",
                 date: new Date(item.created_at).toLocaleDateString(),
                 image: item.image_url,
-                author: item.author || "Admin"
+                author: item.author || "Admin",
+                meta_title: item.meta_title,
+                meta_description: item.meta_description,
+                keywords: item.keywords
             }));
             setBlogs(mappedBlogs);
         }
