@@ -17,7 +17,7 @@ export const BlogCard = ({ blog, index }: BlogCardProps) => {
             transition={{ duration: 0.5, delay: index * 0.1 }}
             className="group cursor-pointer h-full"
         >
-            <Link to={`/blogs/${blog.id}`} className="block h-full">
+            <Link to={`/blogs/${blog.category.toLowerCase().replace(/ /g, '-')}/${blog.slug || blog.id}`} className="block h-full">
                 <div className="modular-card overflow-hidden h-full flex flex-col">
                     {/* Image */}
                     <div className="relative overflow-hidden aspect-[16/10]">

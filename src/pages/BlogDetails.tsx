@@ -9,29 +9,41 @@ import { Blog } from "@/data/blogs";
 import { Helmet } from "react-helmet-async";
 
 const BlogDetails = () => {
-    const { id } = useParams();
+    const { slug } = useParams();
     const [blog, setBlog] = useState<Blog | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        if (id) {
-            fetchBlog(id);
+        if (slug) {
+            fetchBlog(slug);
         }
-    }, [id]);
+    }, [slug]);
 
-    const fetchBlog = async (blogId: string) => {
+    const fetchBlog = async (slugOrId: string) => {
         setIsLoading(true);
-        const { data, error } = await supabase
+
+        // Try to fetch by slug first, or ID as fallback if it looks like a number (for legacy)
+        // But since we are using 'slug' param, we mainly search by valid slug.
+        // For robustness, let's query where slug matches OR id matches (if numeric)
+
+        let queryBuilder = supabase
             .from('blogs')
             .select(`
                 *,
                 categories (
                     name
                 )
-            `)
-            .eq('id', blogId)
-            .single();
+            `);
+
+        // Check if it's purely numeric, might be an ID
+        if (/^\d+$/.test(slugOrId)) {
+            queryBuilder = queryBuilder.or(`id.eq.${slugOrId},slug.eq.${slugOrId}`);
+        } else {
+            queryBuilder = queryBuilder.eq('slug', slugOrId);
+        }
+
+        const { data, error } = await queryBuilder.single();
 
         if (error) {
             console.error("Error fetching blog:", error);

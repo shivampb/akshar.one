@@ -113,7 +113,13 @@ export const BlogDialog = ({ open, onOpenChange, editingBlog, onSuccess }: BlogD
 
             const fileExt = compressedFile.name.split('.').pop();
             const fileName = `${Math.random()}.${fileExt}`;
-            const filePath = `${fileName}`;
+
+            // Sanitize title for folder name
+            const folderName = title
+                ? title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '')
+                : 'untitled';
+
+            const filePath = `${folderName}/${fileName}`;
 
             const { error: uploadError } = await supabase.storage
                 .from('blog-images')
