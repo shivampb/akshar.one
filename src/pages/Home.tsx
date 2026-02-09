@@ -85,6 +85,8 @@ const Home = () => {
 
   useEffect(() => {
     const fetchFeatured = async () => {
+      if (!supabase) return;
+
       // Fetches ALL featured properties (limit removed)
       const { data } = await supabase
         .from('properties')

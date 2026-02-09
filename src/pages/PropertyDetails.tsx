@@ -29,7 +29,10 @@ const PropertyDetails = () => {
   useEffect(() => {
     const fetchProperty = async () => {
       try {
-        if (!slug) return;
+        if (!slug || !supabase) {
+          setLoading(false);
+          return;
+        }
 
         const { data: propertyData, error } = await supabase
           .from('properties')

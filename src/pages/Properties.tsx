@@ -36,6 +36,7 @@ const Properties = () => {
 
   useEffect(() => {
     const fetchProperties = async () => {
+      if (!supabase) return;
       const { data, error } = await supabase.from('properties').select('*');
       if (error) {
         console.error('Error fetching properties:', error);

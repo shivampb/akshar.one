@@ -23,6 +23,10 @@ const Blogs = () => {
     }, []);
 
     const fetchInitialData = async () => {
+        if (!supabase) {
+            setIsLoading(false);
+            return;
+        }
         setIsLoading(true);
         try {
             // Fetch Categories
@@ -46,6 +50,7 @@ const Blogs = () => {
     };
 
     const fetchBlogs = async (categoryName?: string) => {
+        if (!supabase) return;
         let query = supabase
             .from('blogs')
             .select(`
