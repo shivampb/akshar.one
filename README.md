@@ -2,7 +2,7 @@
 
 ## Project info
 
-This project is a luxury real estate application with advanced property management features.
+This project is a luxury real estate application with advanced property management featuress
 
 ## Getting Started
 
