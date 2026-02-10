@@ -8,10 +8,26 @@ import { z } from "zod";
 import emailjs from "@emailjs/browser";
 
 const contactSchema = z.object({
-  name: z.string().trim().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
-  email: z.string().trim().email("Invalid email address").max(255, "Email must be less than 255 characters"),
-  phone: z.string().trim().max(20, "Phone must be less than 20 characters").optional(),
-  message: z.string().trim().min(1, "Message is required").max(1000, "Message must be less than 1000 characters"),
+  name: z
+    .string()
+    .trim()
+    .min(1, "Name is required")
+    .max(100, "Name must be less than 100 characters"),
+  email: z
+    .string()
+    .trim()
+    .email("Invalid email address")
+    .max(255, "Email must be less than 255 characters"),
+  phone: z
+    .string()
+    .trim()
+    .max(20, "Phone must be less than 20 characters")
+    .optional(),
+  message: z
+    .string()
+    .trim()
+    .min(1, "Message is required")
+    .max(1000, "Message must be less than 1000 characters"),
   propertyInterest: z.string().optional(),
 });
 
@@ -25,7 +41,9 @@ export const ContactForm = ({ propertyName }: ContactFormProps) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [errors, setErrors] = useState<Partial<Record<keyof ContactFormData, string>>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof ContactFormData, string>>
+  >({});
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
@@ -35,7 +53,9 @@ export const ContactForm = ({ propertyName }: ContactFormProps) => {
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -53,8 +73,8 @@ export const ContactForm = ({ propertyName }: ContactFormProps) => {
     const result = contactSchema.safeParse(formData);
     if (!result.success) {
       const fieldErrors: Partial<Record<keyof ContactFormData, string>> = {};
-      (result.error as any).errors.forEach((err: any) => {
-        if (err.path[0]) {
+      result.error.errors.forEach((err) => {
+        if (err.path && err.path[0]) {
           fieldErrors[err.path[0] as keyof ContactFormData] = err.message;
         }
       });
@@ -86,7 +106,7 @@ export const ContactForm = ({ propertyName }: ContactFormProps) => {
             message: formData.message,
             property_interest: formData.propertyInterest || "General Inquiry",
           },
-          PUBLIC_KEY
+          PUBLIC_KEY,
         );
       }
 
@@ -119,7 +139,8 @@ export const ContactForm = ({ propertyName }: ContactFormProps) => {
         </div>
         <h3 className="font-serif text-2xl mb-3">Thank You!</h3>
         <p className="text-muted-foreground mb-6">
-          Your message has been sent successfully. We'll be in touch shortly.
+          Your message has been sent successfully. We&apos;ll be in touch
+          shortly.
         </p>
         <button
           onClick={() => {

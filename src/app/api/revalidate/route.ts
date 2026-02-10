@@ -11,7 +11,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    // Note: revalidateTag is a server action, not async
+    // Revalidate Prismic cache
     revalidateTag("prismic");
     return NextResponse.json({ revalidated: true, now: Date.now() });
   } catch (error) {

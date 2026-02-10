@@ -7,7 +7,10 @@ interface TestimonialCardProps {
   index?: number;
 }
 
-export const TestimonialCard = ({ testimonial, index = 0 }: TestimonialCardProps) => {
+export const TestimonialCard = ({
+  testimonial,
+  index = 0,
+}: TestimonialCardProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -18,7 +21,7 @@ export const TestimonialCard = ({ testimonial, index = 0 }: TestimonialCardProps
     >
       <Quote className="w-10 h-10 text-gold/30 mb-6" />
       <blockquote className="text-foreground text-lg leading-relaxed mb-6">
-        "{testimonial.quote}"
+        &quot;{testimonial.quote}&quot;
       </blockquote>
       <div className="flex items-center gap-4">
         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gold to-gold-light flex items-center justify-center text-white font-serif font-semibold text-lg">
