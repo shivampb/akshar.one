@@ -55,10 +55,10 @@ export const PropertyQuickSummary = ({ property }: PropertyQuickSummaryProps) =>
     return (
         <section className="py-6 border-b border-border bg-card/30">
             <div className="container-luxury">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 divide-y md:divide-y-0 md:divide-x divide-border">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-0">
 
                     {/* Configuration */}
-                    <div className="flex flex-col items-center text-center p-2">
+                    <div className="flex flex-col items-center text-center p-4 border-r border-b md:border-b-0 border-border">
                         <span className="font-serif text-lg font-medium text-foreground">
                             {property.configuration || "N/A"}
                         </span>
@@ -66,7 +66,7 @@ export const PropertyQuickSummary = ({ property }: PropertyQuickSummaryProps) =>
                     </div>
 
                     {/* Possession */}
-                    <div className="flex flex-col items-center text-center p-2 pt-6 md:pt-2">
+                    <div className="flex flex-col items-center text-center p-4 border-b md:border-b-0 md:border-r border-border">
                         <span className="font-serif text-lg font-medium text-foreground">
                             {property.possession_date || "Ready to Move"}
                         </span>
@@ -74,7 +74,7 @@ export const PropertyQuickSummary = ({ property }: PropertyQuickSummaryProps) =>
                     </div>
 
                     {/* Approx Price */}
-                    <div className="flex flex-col items-center text-center p-2 pt-6 md:pt-2">
+                    <div className="flex flex-col items-center text-center p-4 border-r border-border">
                         <span className="font-serif text-lg font-medium text-foreground">
                             {property.price_on_request
                                 ? "Price on Request"
@@ -84,7 +84,7 @@ export const PropertyQuickSummary = ({ property }: PropertyQuickSummaryProps) =>
                     </div>
 
                     {/* Sizes */}
-                    <div className="flex flex-col items-center text-center p-2 pt-6 md:pt-2 relative">
+                    <div className="flex flex-col items-center text-center p-4 relative">
                         <span className="font-serif text-lg font-medium text-foreground">
                             {property.size_range || (property.features.area ? `${property.features.area} sq.ft` : "N/A")}
                         </span>

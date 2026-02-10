@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { Mail, Phone, MapPin, Instagram, Facebook, Linkedin } from "lucide-react";
 
 const footerLinks = {
@@ -23,7 +23,7 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link to="/" className="inline-block mb-6">
+            <Link href="/" className="inline-block mb-6">
               <h2 className="font-serif text-2xl font-semibold">
                 <span className="text-gray-900">Akshar</span>
                 <span className="text-blue-600">One</span>
@@ -68,7 +68,7 @@ export const Footer = () => {
               {footerLinks.properties.map((link) => (
                 <li key={link.path}>
                   <Link
-                    to={link.path}
+                    href={link.path}
                     className="text-sm text-gray-600 hover:text-blue-600 transition-colors"
                   >
                     {link.name}
@@ -85,7 +85,7 @@ export const Footer = () => {
               {footerLinks.company.map((link) => (
                 <li key={link.path}>
                   <Link
-                    to={link.path}
+                    href={link.path}
                     className="text-sm text-gray-600 hover:text-blue-600 transition-colors"
                   >
                     {link.name}

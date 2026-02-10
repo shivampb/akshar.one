@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+"use client";
+
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
@@ -84,7 +86,7 @@ export const CTASection = ({
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
-              to={primaryButtonLink}
+              href={primaryButtonLink}
               className={getButtonClass()}
             >
               {primaryButtonText}
@@ -93,7 +95,7 @@ export const CTASection = ({
 
             {secondaryButtonLink && secondaryButtonText && (
               <Link
-                to={secondaryButtonLink}
+                href={secondaryButtonLink}
                 className={`btn-luxury border-2 ${isImageBackground || variant === "dark" || variant === "gold"
                   ? "border-white/30 text-white hover:bg-white/10"
                   : "border-primary text-primary hover:bg-primary hover:text-primary-foreground"

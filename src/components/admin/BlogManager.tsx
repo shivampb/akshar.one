@@ -1,3 +1,5 @@
+"use client";
+
 import { Blog } from "@/data/blogs";
 import {
     Table,
@@ -16,7 +18,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 interface BlogManagerProps {
     blogs: Blog[];
@@ -63,7 +65,10 @@ export const BlogManager = ({ blogs, onEdit, onDelete }: BlogManagerProps) => {
                                         <TableCell className="whitespace-nowrap">{blog.date}</TableCell>
                                         <TableCell className="text-right">
                                             <div className="flex justify-end gap-2">
-                                                <Link to={`/blogs/${blog.id}`} target="_blank">
+                                                <Link
+                                                    href={`/blogs/${blog.category.toLowerCase().replace(/ /g, '-')}/${blog.slug || blog.id}`}
+                                                    target="_blank"
+                                                >
                                                     <Button variant="ghost" size="icon" className="h-8 w-8">
                                                         <Eye className="h-4 w-4" />
                                                         <span className="sr-only">View</span>

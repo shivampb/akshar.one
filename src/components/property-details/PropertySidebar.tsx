@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+"use client";
+
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { MessageSquare, Calendar, Share2 } from "lucide-react";
 import { ContactForm } from "@/components/ContactForm";
@@ -29,7 +31,7 @@ export const PropertySidebar = ({ propertyName }: PropertySidebarProps) => {
                         Enquire Now
                     </a>
                     <Link
-                        to="/contact"
+                        href="/contact"
                         className="btn-luxury-outline w-full flex items-center justify-center gap-2"
                     >
                         <Calendar className="w-4 h-4" />

@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+"use client";
+
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { MapPin, Square, ArrowRight } from "lucide-react";
 import type { Property } from "@/data/properties";
@@ -10,6 +12,8 @@ interface PropertyCardProps {
 }
 
 export const PropertyCard = ({ property, index = 0 }: PropertyCardProps) => {
+  const propertyLink = `/properties/${property.slug}`;
+
   return (
     <motion.article
       initial={{ opacity: 0, y: 20 }}
@@ -18,7 +22,7 @@ export const PropertyCard = ({ property, index = 0 }: PropertyCardProps) => {
       transition={{ duration: 0.5, delay: index * 0.1 }}
       className="property-card group"
     >
-      <Link to={`/properties/${property.slug}`}>
+      <Link href={propertyLink}>
         {/* Image */}
         <div className="property-card-image">
           <img

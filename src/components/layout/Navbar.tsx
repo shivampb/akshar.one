@@ -1,5 +1,8 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Phone, MessageCircle, Mail, Users, ChevronDown } from "lucide-react";
 
@@ -51,10 +54,10 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isConnectOpen, setIsConnectOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const location = useLocation();
+  const pathname = usePathname();
 
   // Check if we are on the home page
-  const isHomePage = location.pathname === "/";
+  const isHomePage = pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -72,7 +75,7 @@ export const Navbar = () => {
   useEffect(() => {
     setIsOpen(false);
     setIsConnectOpen(false);
-  }, [location]);
+  }, [pathname]);
 
   // Determine navbar styles based on scroll and page
   // If not home page, always use scrolled style (white bg, black text)
@@ -114,7 +117,7 @@ export const Navbar = () => {
           >
             <Menu className="w-6 h-6" />
           </button>
-          <Link to="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <span className={`text-xl md:text-2xl font-light ${logoTextClasses}`}>
               Akshar<span className={logoSubTextClasses}> | One</span>
             </span>
@@ -125,7 +128,7 @@ export const Navbar = () => {
         <div className="flex items-center gap-8">
           {/* Businesses Link - Hidden on mobile */}
           <Link
-            to="/about"
+            href="/about"
             className={`hidden lg:block text-base font-medium transition-colors ${textClasses}`}
           >
             Businesses
@@ -135,8 +138,8 @@ export const Navbar = () => {
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <Link
-                key={link.path}
-                to={link.path}
+                key={link.name}
+                href={link.path}
                 className={`text-base font-medium transition-colors ${textClasses}`}
               >
                 {link.name}
@@ -188,7 +191,7 @@ export const Navbar = () => {
                             </a>
                           ) : (
                             <Link
-                              to="/contact"
+                              href="/contact"
                               className="flex items-start gap-4 px-6 py-4 hover:bg-gray-50 transition-colors"
                               onClick={() => setIsConnectOpen(false)}
                             >
@@ -213,7 +216,7 @@ export const Navbar = () => {
 
           {/* Enquire Now Button */}
           <Link
-            to="/contact"
+            href="/contact"
             className={`${buttonClasses} text-xs md:text-sm font-medium px-4 md:px-6 py-2 md:py-2.5 rounded transition-colors`}
           >
             Enquire Now
@@ -251,7 +254,7 @@ export const Navbar = () => {
                   </button>
 
                   {/* Logo */}
-                  <Link to="/" className="block mb-8">
+                  <Link href="/" className="block mb-8">
                     <span className="text-foreground text-xl font-light">
                       Akshar<span className="text-muted-foreground"> | One</span>
                     </span>
@@ -259,13 +262,13 @@ export const Navbar = () => {
 
                   {/* Navigation Links */}
                   <nav className="flex flex-col gap-4">
-                    <Link to="/" className="text-foreground hover:text-gold transition-colors py-2">
+                    <Link href="/" className="text-foreground hover:text-gold transition-colors py-2">
                       Home
                     </Link>
                     {navLinks.map((link) => (
                       <Link
-                        key={link.path}
-                        to={link.path}
+                        key={link.name}
+                        href={link.path}
                         className="text-foreground hover:text-gold transition-colors py-2"
                       >
                         {link.name}
@@ -292,7 +295,7 @@ export const Navbar = () => {
                             </a>
                           ) : (
                             <Link
-                              to="/contact"
+                              href="/contact"
                               className="flex items-start gap-3 py-3 hover:bg-gray-50 -mx-2 px-2 rounded transition-colors"
                             >
                               <option.icon className="w-4 h-4 text-gray-700 mt-0.5" />
@@ -306,7 +309,7 @@ export const Navbar = () => {
                       ))}
                     </div>
 
-                    <Link to="/about" className="text-foreground hover:text-gold transition-colors py-2 mt-4">
+                    <Link href="/about" className="text-foreground hover:text-gold transition-colors py-2 mt-4">
                       Businesses
                     </Link>
                   </nav>

@@ -1,9 +1,11 @@
+"use client";
+
 import { useState } from "react";
 import { Search } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 
 export const HeroSearchBar = () => {
-    const navigate = useNavigate();
+    const router = useRouter();
     const [location, setLocation] = useState("");
     const [propertyType, setPropertyType] = useState("");
 
@@ -16,7 +18,7 @@ export const HeroSearchBar = () => {
 
         // Navigate to properties page with filters
         const queryString = params.toString();
-        navigate(`/properties${queryString ? `?${queryString}` : ""}`);
+        router.push(`/properties${queryString ? `?${queryString}` : ""}`);
     };
 
     return (

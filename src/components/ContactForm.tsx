@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Send, CheckCircle } from "lucide-react";
@@ -65,9 +67,9 @@ export const ContactForm = ({ propertyName }: ContactFormProps) => {
     try {
       // REPLACE THESE WITH YOUR ACTUAL EMAILJS CREDENTIALS
       // Get them from https://dashboard.emailjs.com/
-      const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-      const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-      const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+      const SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+      const TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+      const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
 
       // If keys are not set, simulate (so app doesn't crash during demo)
       if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {

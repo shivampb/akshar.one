@@ -1,6 +1,8 @@
+"use client";
+
 import { motion } from "framer-motion";
 import { ArrowRight, Calendar, User } from "lucide-react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { Blog } from "@/data/blogs";
 
 interface BlogCardProps {
@@ -17,7 +19,7 @@ export const BlogCard = ({ blog, index }: BlogCardProps) => {
             transition={{ duration: 0.5, delay: index * 0.1 }}
             className="group cursor-pointer h-full"
         >
-            <Link to={`/blogs/${blog.category.toLowerCase().replace(/ /g, '-')}/${blog.slug || blog.id}`} className="block h-full">
+            <Link href={`/blogs/${blog.category.toLowerCase().replace(/ /g, '-')}/${blog.slug || blog.id}`} className="block h-full">
                 <div className="modular-card overflow-hidden h-full flex flex-col">
                     {/* Image */}
                     <div className="relative overflow-hidden aspect-[16/10]">

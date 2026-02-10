@@ -53,7 +53,7 @@ While city centers remain vibrant, the 'Surban' lifestyle—suburban areas with 
         excerpt: "Expert insights on the best locations and property types for long-term real estate investment in 2026.",
         category: "Investment",
         date: "Feb 3, 2026",
-        image: "/src/assets/property-2.jpg",
+        image: "/assets/property-2.jpg",
         author: "Michael Chen",
         content: `
 Real estate has long been considered a safe haven for capital, but the landscape of premium property investment is shifting. As we navigate through 2026, savvy investors are looking beyond traditional markets to identify high-yield opportunities in emerging sectors and locations. Understanding these trends is crucial for building a resilient and profitable portfolio.
@@ -79,7 +79,7 @@ Ultimately, successful investment in 2026 requires a keen eye for value, a willi
         excerpt: "How eco-friendly design principles are being integrated into luxury residential projects.",
         category: "Sustainability",
         date: "Jan 28, 2026",
-        image: "/src/assets/property-3.jpg",
+        image: "/assets/property-3.jpg",
         author: "Emma Davis",
         content: `
 Sustainability is no longer a niche preference; it is a defining characteristic of modern architectural excellence. High-net-worth individuals are increasingly demanding homes that align with their values of environmental stewardship. This shift is driving a renaissance in sustainable architecture, where luxury and eco-consciousness coexist in perfect harmony.
@@ -105,7 +105,7 @@ Sustainable architecture proves that living responsibly does not mean sacrificin
         excerpt: "Exploring the latest innovations in home automation and how they're enhancing modern living.",
         category: "Technology",
         date: "Jan 25, 2026",
-        image: "/src/assets/property-4.jpg",
+        image: "/assets/property-4.jpg",
         author: "David Martinez",
         content: `
 The **"smart home"** has graduated from a novelty to a necessity in the luxury real estate market. In 2026, automation is about more than just voice-controlled lights; it is about creating an intuitive ecosystem that anticipates the needs of its inhabitants. This integration of technology creates a seamless living experience that offers convenience, security, and efficiency.
@@ -131,7 +131,7 @@ As technology continues to advance, the smart home will become an even more inte
         excerpt: "A comprehensive analysis of market trends and future predictions for different property locations.",
         category: "Market Analysis",
         date: "Jan 20, 2026",
-        image: "/src/assets/property-5.jpg",
+        image: "/assets/property-5.jpg",
         author: "Lisa Anderson",
         content: `
 The perennial debate between urban and suburban living has taken on new dimensions in recent years. Shifts in work culture, lifestyle priorities, and economic factors have altered the desirability of different locations. For investors and homebuyers alike, choosing between the vibrant pulse of the city and the spacious tranquility of the suburbs requires a nuanced understanding of current market dynamics.
@@ -157,7 +157,7 @@ Ultimately, the "right" choice depends on individual investment goals and lifest
         excerpt: "Timeless design principles that create stunning interiors in high-end properties.",
         category: "Design",
         date: "Jan 15, 2026",
-        image: "/src/assets/property-6.jpg",
+        image: "/assets/property-6.jpg",
         author: "Robert Taylor",
         content: `
 Interior design in luxury homes is an art form that transcends mere decoration. It is about crafting environments that evoke emotion, tell a story, and provide deep physical and psychological comfort. In 2026, the trend moves away from sterile show-spaces toward interiors that are rich in texture, personality, and artisanal craftsmanship.

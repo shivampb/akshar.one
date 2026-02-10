@@ -1,0 +1,145 @@
+"use client";
+
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { ArrowLeft, Share2 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+// import { Layout } from "@/components/layout/Layout"; // Removed
+import { Blog } from "@/data/blogs";
+// import { Helmet } from "react-helmet-async"; // Removed
+
+interface BlogDetailsProps {
+    blog: Blog;
+}
+
+const BlogDetails = ({ blog }: BlogDetailsProps) => {
+    // Scroll to top on mount
+    // useEffect(() => {
+    //    window.scrollTo(0, 0);
+    // }, []);
+    // Next.js handles scrolling usually.
+
+    if (!blog) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <h1 className="text-2xl font-serif mb-4">Blog Post Not Found</h1>
+                    <Link href="/blogs" className="text-gold hover:underline">
+                        Return to Insights
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <article className="min-h-screen bg-background pb-20">
+            <div className="container mx-auto px-6 md:px-12 max-w-5xl pt-24 md:pt-32">
+
+                {/* Breadcrumbs */}
+                <nav className="flex items-center text-sm text-muted-foreground mb-8 overflow-x-auto whitespace-nowrap">
+                    <Link href="/" className="hover:text-gold transition-colors">Home</Link>
+                    <span className="mx-2">/</span>
+                    <Link href="/blogs" className="hover:text-gold transition-colors">Communication Corner</Link>
+                    <span className="mx-2">/</span>
+                    <span className="text-foreground">{blog.category}</span>
+                    <span className="mx-2">/</span>
+                    <span className="text-foreground truncate max-w-[200px]">{blog.title}</span>
+                </nav>
+
+                {/* Header Section */}
+                <div className="mb-8">
+                    <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-3xl md:text-5xl font-serif font-bold text-foreground mb-6 leading-tight"
+                    >
+                        {blog.title}
+                    </motion.h1>
+
+                    <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-6">
+                        <div className="flex items-center gap-6 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-2">
+                                <span>{blog.date}</span>
+                                <span>in</span>
+                                <span className="font-medium text-foreground">{blog.category}</span>
+                            </div>
+                            <div className="hidden md:flex items-center gap-2">
+                                <span className="w-1 h-1 rounded-full bg-border" />
+                                <span>By {blog.author}</span>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={async () => {
+                                try {
+                                    if (navigator.share) {
+                                        await navigator.share({
+                                            title: blog.title,
+                                            text: blog.excerpt,
+                                            url: window.location.href,
+                                        });
+                                    } else {
+                                        await navigator.clipboard.writeText(window.location.href);
+                                        alert("Link copied to clipboard!");
+                                    }
+                                } catch (err) {
+                                    console.error(err);
+                                }
+                            }}
+                            className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                            <Share2 className="w-4 h-4" />
+                            Share
+                        </button>
+                    </div>
+                </div>
+
+                {/* Featured Image */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="relative w-full aspect-[21/9] rounded-2xl overflow-hidden mb-12"
+                >
+                    <img
+                        src={blog.image}
+                        alt={blog.title}
+                        className="w-full h-full object-cover"
+                    />
+                </motion.div>
+
+                {/* Content */}
+                <div className="max-w-4xl mx-auto">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="prose prose-lg md:prose-xl prose-stone mx-auto
+                        prose-headings:font-sans prose-headings:font-bold prose-headings:text-foreground
+                        prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:font-normal
+                        prose-strong:text-foreground prose-strong:font-bold
+                        prose-a:text-gold prose-a:no-underline hover:prose-a:underline
+                        marker:text-gold"
+                    >
+                        {/* @ts-ignore */}
+                        <ReactMarkdown>{blog.content}</ReactMarkdown>
+                    </motion.div>
+
+                    {/* Footer with Tags/Share (Optional) */}
+                    <div className="mt-16 pt-8 border-t border-border">
+                        <Link
+                            href="/blogs"
+                            className="inline-flex items-center gap-2 text-gold hover:underline font-medium"
+                        >
+                            <ArrowLeft className="w-4 h-4" />
+                            Back to All Insights
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        </article>
+    );
+};
+
+export default BlogDetails;
