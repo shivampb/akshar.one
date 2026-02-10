@@ -25,12 +25,7 @@
         "config": {
           "label": "Category",
           "placeholder": "Select Category",
-          "options": [
-            "Residential",
-            "Commercial",
-            "Industrial",
-            "Agricultural"
-          ]
+          "options": ["Residential", "Commercial", "Industrial", "Agricultural"]
         }
       },
       "type": {
@@ -244,7 +239,8 @@
               "config": {
                 "label": "Answer",
                 "placeholder": "Write the answer here...",
-                "single": "paragraph,strong,em,hyperlink"
+                "allowTargetBlank": true,
+                "multi": "paragraph,strong,em,hyperlink,image"
               }
             }
           }

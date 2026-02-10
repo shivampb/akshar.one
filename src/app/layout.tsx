@@ -41,15 +41,41 @@ export const metadata: Metadata = {
 };
 
 import { PrismicPreview } from "@prismicio/next";
-import { repositoryName } from "@/prismicio";
+import { repositoryName, createClient } from "@/prismicio";
+import Script from "next/script";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const client = createClient();
+  const settings = await client.getSingle("settings").catch(() => null);
+  const gaId = settings?.data.google_analytics_id;
+
   return (
     <html lang="en" className={`${outfit.variable} ${cormorant.variable}`}>
+      <head>
+        {settings?.data.header_scripts && (
+          <script dangerouslySetInnerHTML={{ __html: settings.data.header_scripts }} />
+        )}
+        {gaId && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaId}');
+              `}
+            </Script>
+          </>
+        )}
+      </head>
       <body className="antialiased font-serif">
         <Providers>
           <Layout>
@@ -57,6 +83,9 @@ export default function RootLayout({
           </Layout>
         </Providers>
         <PrismicPreview repositoryName={repositoryName} />
+        {settings?.data.footer_scripts && (
+          <script dangerouslySetInnerHTML={{ __html: settings.data.footer_scripts }} />
+        )}
       </body>
     </html>
   );

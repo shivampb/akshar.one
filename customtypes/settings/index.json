@@ -1,0 +1,130 @@
+{
+    "id": "settings",
+    "label": "Site Settings",
+    "repeatable": false,
+    "status": true,
+    "format": "custom",
+    "json": {
+        "Footer": {
+            "footer_description": {
+                "type": "Text",
+                "config": {
+                    "label": "Footer Description",
+                    "placeholder": "Short summary about the company..."
+                }
+            },
+            "instagram_link": {
+                "type": "Link",
+                "config": {
+                    "label": "Instagram Link",
+                    "placeholder": ""
+                }
+            },
+            "facebook_link": {
+                "type": "Link",
+                "config": {
+                    "label": "Facebook Link",
+                    "placeholder": ""
+                }
+            },
+            "linkedin_link": {
+                "type": "Link",
+                "config": {
+                    "label": "Linkedin Link",
+                    "placeholder": ""
+                }
+            },
+            "address": {
+                "type": "StructuredText",
+                "config": {
+                    "label": "Office Address",
+                    "placeholder": "Full office address",
+                    "single": "paragraph,strong,em,hyperlink"
+                }
+            },
+            "phone": {
+                "type": "Text",
+                "config": {
+                    "label": "Phone Number",
+                    "placeholder": "+91 0000 000 000"
+                }
+            },
+            "email": {
+                "type": "Text",
+                "config": {
+                    "label": "Email Address",
+                    "placeholder": "contact@aksharone.com"
+                }
+            },
+            "properties_links": {
+                "type": "Group",
+                "config": {
+                    "label": "Properties Section Links",
+                    "fields": {
+                        "label": {
+                            "type": "Text",
+                            "config": {
+                                "label": "Link Label",
+                                "placeholder": "e.g. All Properties"
+                            }
+                        },
+                        "link": {
+                            "type": "Link",
+                            "config": {
+                                "label": "Link URL",
+                                "placeholder": ""
+                            }
+                        }
+                    }
+                }
+            },
+            "company_links": {
+                "type": "Group",
+                "config": {
+                    "label": "Company Section Links",
+                    "fields": {
+                        "label": {
+                            "type": "Text",
+                            "config": {
+                                "label": "Link Label",
+                                "placeholder": "e.g. About Us"
+                            }
+                        },
+                        "link": {
+                            "type": "Link",
+                            "config": {
+                                "label": "Link URL",
+                                "placeholder": ""
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "Google Analytics": {
+            "google_analytics_id": {
+                "type": "Text",
+                "config": {
+                    "label": "Google Analytics ID (G-XXXXXXX)",
+                    "placeholder": "G-"
+                }
+            }
+        },
+        "Scripts": {
+            "header_scripts": {
+                "type": "Text",
+                "config": {
+                    "label": "Header Scripts (Custom JS)",
+                    "placeholder": "Paste scripts here to appear in <head>"
+                }
+            },
+            "footer_scripts": {
+                "type": "Text",
+                "config": {
+                    "label": "Footer Scripts (Custom JS)",
+                    "placeholder": "Paste scripts here to appear before </body>"
+                }
+            }
+        }
+    }
+}

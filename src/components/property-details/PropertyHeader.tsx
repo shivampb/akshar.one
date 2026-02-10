@@ -33,7 +33,7 @@ export const PropertyHeader = ({ property, fetchedLocation }: PropertyHeaderProp
                         </h1>
                         <div className="flex items-center gap-2 text-muted-foreground">
                             <MapPin className="w-4 h-4" />
-                            <span>{fetchedLocation || property.address}</span>
+                            <span>{property.location}</span>
                         </div>
                     </motion.div>
 

@@ -6,10 +6,10 @@ type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
 type PickContentRelationshipFieldData<
   TRelationship extends
-    | prismic.CustomTypeModelFetchCustomTypeLevel1
-    | prismic.CustomTypeModelFetchCustomTypeLevel2
-    | prismic.CustomTypeModelFetchGroupLevel1
-    | prismic.CustomTypeModelFetchGroupLevel2,
+  | prismic.CustomTypeModelFetchCustomTypeLevel1
+  | prismic.CustomTypeModelFetchCustomTypeLevel2
+  | prismic.CustomTypeModelFetchGroupLevel1
+  | prismic.CustomTypeModelFetchGroupLevel2,
   TData extends Record<
     string,
     | prismic.AnyRegularField
@@ -37,10 +37,10 @@ type PickContentRelationshipFieldData<
     > as TGroup["id"]]: TData[TGroup["id"]] extends prismic.GroupField<
       infer TGroupData
     >
-      ? prismic.GroupField<
-          PickContentRelationshipFieldData<TGroup, TGroupData, TLang>
-        >
-      : never;
+    ? prismic.GroupField<
+      PickContentRelationshipFieldData<TGroup, TGroupData, TLang>
+    >
+    : never;
   } & // Other fields
   {
     [TFieldKey in Extract<
@@ -51,8 +51,8 @@ type PickContentRelationshipFieldData<
 
 type ContentRelationshipFieldWithData<
   TCustomType extends
-    | readonly (prismic.CustomTypeModelFetchCustomTypeLevel1 | string)[]
-    | readonly (prismic.CustomTypeModelFetchCustomTypeLevel2 | string)[],
+  | readonly (prismic.CustomTypeModelFetchCustomTypeLevel1 | string)[]
+  | readonly (prismic.CustomTypeModelFetchCustomTypeLevel2 | string)[],
   TLang extends string = string,
 > = {
   [ID in Exclude<
@@ -393,6 +393,31 @@ export interface PropertyDocumentDataAmenitiesItem {
 }
 
 /**
+ * Item in *Property → FAQs*
+ */
+export interface PropertyDocumentDataFaqsItem {
+  /**
+   * Question field in *Property → FAQs*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: e.g. Is this property ready to move?
+   * - **API ID Path**: property.faqs[].question
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  question: prismic.KeyTextField;
+
+  /**
+   * Answer field in *Property → FAQs*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: Write the answer here...
+   * - **API ID Path**: property.faqs[].answer
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  answer: prismic.RichTextField;
+}
+
+/**
  * Content for Property documents
  */
 interface PropertyDocumentData {
@@ -659,7 +684,29 @@ interface PropertyDocumentData {
    * - **Tab**: Details
    * - **Documentation**: https://prismic.io/docs/fields/text
    */
-  map_url: prismic.KeyTextField; /**
+  map_url: prismic.KeyTextField;
+
+  /**
+   * Project Brochure field in *Property*
+   *
+   * - **Field Type**: Link to Media
+   * - **Placeholder**: Upload PDF Brochure
+   * - **API ID Path**: property.brochure
+   * - **Tab**: Details
+   * - **Documentation**: https://prismic.io/docs/fields/link-to-media
+   */
+  brochure: prismic.LinkToMediaField<prismic.FieldState, never>;
+
+  /**
+   * FAQs field in *Property*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: property.faqs[]
+   * - **Tab**: Details
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  faqs: prismic.GroupField<Simplify<PropertyDocumentDataFaqsItem>>; /**
    * Meta Title field in *Property*
    *
    * - **Field Type**: Text
@@ -702,17 +749,217 @@ interface PropertyDocumentData {
  *
  * @typeParam Lang - Language API ID of the document.
  */
-export type PropertyDocument<Lang extends string = string> =
-  prismic.PrismicDocumentWithUID<
-    Simplify<PropertyDocumentData>,
-    "property",
+/**
+ * Item in *Settings → Footer → Properties Section Links*
+ */
+export interface SettingsDocumentDataPropertiesLinksItem {
+  /**
+   * Link Label field in *Settings → Footer → Properties Section Links*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: e.g. All Properties
+   * - **API ID Path**: settings.properties_links[].label
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  label: prismic.KeyTextField;
+
+  /**
+   * Link URL field in *Settings → Footer → Properties Section Links*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: settings.properties_links[].link
+   * - **Documentation**: https://prismic.io/docs/fields/link
+   */
+  link: prismic.LinkField;
+}
+
+/**
+ * Item in *Settings → Footer → Company Section Links*
+ */
+export interface SettingsDocumentDataCompanyLinksItem {
+  /**
+   * Link Label field in *Settings → Footer → Company Section Links*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: e.g. About Us
+   * - **API ID Path**: settings.company_links[].label
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  label: prismic.KeyTextField;
+
+  /**
+   * Link URL field in *Settings → Footer → Company Section Links*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: settings.company_links[].link
+   * - **Documentation**: https://prismic.io/docs/fields/link
+   */
+  link: prismic.LinkField;
+}
+
+/**
+ * Content for Settings documents
+ */
+interface SettingsDocumentData {
+  /**
+   * Footer Description field in *Settings → Footer*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Short summary about the company...
+   * - **API ID Path**: settings.footer_description
+   * - **Tab**: Footer
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  footer_description: prismic.KeyTextField;
+
+  /**
+   * Instagram Link field in *Settings → Footer*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: settings.instagram_link
+   * - **Tab**: Footer
+   * - **Documentation**: https://prismic.io/docs/fields/link
+   */
+  instagram_link: prismic.LinkField;
+
+  /**
+   * Facebook Link field in *Settings → Footer*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: settings.facebook_link
+   * - **Tab**: Footer
+   * - **Documentation**: https://prismic.io/docs/fields/link
+   */
+  facebook_link: prismic.LinkField;
+
+  /**
+   * Linkedin Link field in *Settings → Footer*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: settings.linkedin_link
+   * - **Tab**: Footer
+   * - **Documentation**: https://prismic.io/docs/fields/link
+   */
+  linkedin_link: prismic.LinkField;
+
+  /**
+   * Office Address field in *Settings → Footer*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: Full office address
+   * - **API ID Path**: settings.address
+   * - **Tab**: Footer
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  address: prismic.RichTextField;
+
+  /**
+   * Phone Number field in *Settings → Footer*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: +91 0000 000 000
+   * - **API ID Path**: settings.phone
+   * - **Tab**: Footer
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  phone: prismic.KeyTextField;
+
+  /**
+   * Email Address field in *Settings → Footer*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: contact@aksharone.com
+   * - **API ID Path**: settings.email
+   * - **Tab**: Footer
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  email: prismic.KeyTextField;
+
+  /**
+   * Properties Section Links field in *Settings → Footer*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: settings.properties_links[]
+   * - **Tab**: Footer
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  properties_links: prismic.GroupField<
+    Simplify<SettingsDocumentDataPropertiesLinksItem>
+  >;
+
+  /**
+   * Company Section Links field in *Settings → Footer*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: settings.company_links[]
+   * - **Tab**: Footer
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  company_links: prismic.GroupField<
+    Simplify<SettingsDocumentDataCompanyLinksItem>
+  >;
+  /**
+   * Google Analytics ID (G-XXXXXXX) field in *Settings → Google Analytics*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: G-
+   * - **API ID Path**: settings.google_analytics_id
+   * - **Tab**: Google Analytics
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  google_analytics_id: prismic.KeyTextField;
+
+  /**
+   * Header Scripts (Custom JS) field in *Settings → Scripts*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Paste scripts here to appear in <head>
+   * - **API ID Path**: settings.header_scripts
+   * - **Tab**: Scripts
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  header_scripts: prismic.KeyTextField;
+
+  /**
+   * Footer Scripts (Custom JS) field in *Settings → Scripts*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Paste scripts here to appear before </body>
+   * - **API ID Path**: settings.footer_scripts
+   * - **Tab**: Scripts
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  footer_scripts: prismic.KeyTextField;
+}
+
+/**
+ * Settings document from Prismic
+ *
+ * - **API ID**: `settings`
+ * - **Repeatable**: `false`
+ * - **Documentation**: https://prismic.io/docs/content-modeling
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type SettingsDocument<Lang extends string = string> =
+  prismic.PrismicDocumentWithoutUID<
+    Simplify<SettingsDocumentData>,
+    "settings",
     Lang
   >;
 
 export type AllDocumentTypes =
   | BlogPostDocument
   | PageDocument
-  | PropertyDocument;
+  | PropertyDocument
+  | SettingsDocument;
 
 /**
  * Item in *AlternateGrid → Default → Primary → items*
@@ -1362,6 +1609,7 @@ declare module "@prismicio/client" {
       PropertyDocumentData,
       PropertyDocumentDataGalleryItem,
       PropertyDocumentDataAmenitiesItem,
+      PropertyDocumentDataFaqsItem,
       AllDocumentTypes,
       AlternateGridSlice,
       AlternateGridSliceDefaultPrimaryItemsItem,

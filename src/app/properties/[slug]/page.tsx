@@ -48,6 +48,7 @@ function mapPrismicToProperty(doc: any): Property {
     },
     amenities: amenities as string[],
     isFeatured: data.is_featured || false,
+    area_name: data.location || undefined,
 
     // Project Specifications
     project_units: data.project_units || undefined,
@@ -117,17 +118,30 @@ export default async function Page({
 
   const property = mapPrismicToProperty(propertyDoc);
 
-  // Fetch related properties (basic implementation matching existing logic)
-  // We can't easily query by area_name if it's not a clear field, so we fallback to type or category
+  // Fetch related properties in the same location
   const relatedDocs = await client.getAllByType("property", {
-    limit: 3,
+    limit: 6,
     filters: [
-      prismic.filter.at("my.property.type", property.type),
+      prismic.filter.at("my.property.location", property.location),
       prismic.filter.not("document.id", property.id)
     ]
   });
 
-  const relatedProperties = relatedDocs.map(mapPrismicToProperty);
+  // If not enough properties in same location, fallback to same type
+  let relatedProperties = relatedDocs.map(mapPrismicToProperty);
+
+  if (relatedProperties.length < 3) {
+    const fallbackDocs = await client.getAllByType("property", {
+      limit: 6,
+      filters: [
+        prismic.filter.at("my.property.type", property.type),
+        prismic.filter.not("document.id", property.id),
+        // Exclude ones we already found
+        ...relatedProperties.map(p => prismic.filter.not("document.id", p.id))
+      ]
+    });
+    relatedProperties = [...relatedProperties, ...fallbackDocs.map(mapPrismicToProperty)];
+  }
 
   // Structured Data for Google
   const jsonLd = {
