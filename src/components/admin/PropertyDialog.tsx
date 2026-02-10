@@ -24,6 +24,7 @@ import { FeaturesSection } from "./property-form/FeaturesSection";
 import { LocationSection } from "./property-form/LocationSection";
 import { BrochureUploadSection } from "./property-form/BrochureUploadSection";
 import { FAQSection } from "./property-form/FAQSection";
+import { SeoSection } from "./property-form/SeoSection";
 
 interface PropertyDialogProps {
     open: boolean;
@@ -95,6 +96,10 @@ export const PropertyDialog = ({
                 faqs: editingProperty.faqs || [],
                 price_on_request: editingProperty.price_on_request || false,
                 amenities: editingProperty.amenities || [],
+                // SEO Fields
+                meta_title: editingProperty.meta_title || "",
+                meta_description: editingProperty.meta_description || "",
+                keywords: editingProperty.keywords || "",
             });
         } else {
             form.reset({
@@ -127,6 +132,10 @@ export const PropertyDialog = ({
                 faqs: [],
                 price_on_request: false,
                 amenities: [],
+                // SEO Fields
+                meta_title: "",
+                meta_description: "",
+                keywords: "",
             });
         }
     }, [editingProperty, form]);
@@ -173,6 +182,10 @@ export const PropertyDialog = ({
             map_url: data.map_url,
             faqs: data.faqs,
             price_on_request: data.price_on_request,
+            // SEO Fields
+            meta_title: data.meta_title,
+            meta_description: data.meta_description,
+            keywords: data.keywords,
         };
 
         if (editingProperty) {
@@ -224,6 +237,7 @@ export const PropertyDialog = ({
                                 <AddressSection />
                                 <DescriptionSection />
                                 <FeaturesSection />
+                                <SeoSection />
                             </div>
 
                             {/* Right Column */}

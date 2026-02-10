@@ -74,10 +74,27 @@ export const PropertyCard = ({ property, index = 0 }: PropertyCardProps) => {
               {property.configuration && (
                 <span>{property.configuration}</span>
               )}
-              <div className="flex items-center gap-1.5">
-                <Square className="w-4 h-4" />
-                <span>{property.features.area.toLocaleString()} sqft</span>
-              </div>
+              {property.features.area > 0 ? (
+                <div className="flex items-center gap-1.5">
+                  <Square className="w-4 h-4" />
+                  <span>{property.features.area.toLocaleString()} sqft</span>
+                </div>
+              ) : property.size_range ? (
+                <div className="flex items-center gap-1.5">
+                  <Square className="w-4 h-4" />
+                  <span>{property.size_range}</span>
+                </div>
+              ) : property.project_area ? (
+                <div className="flex items-center gap-1.5">
+                  <Square className="w-4 h-4" />
+                  <span>{property.project_area}</span>
+                </div>
+              ) : property.project_size ? (
+                <div className="flex items-center gap-1.5">
+                  <Square className="w-4 h-4" />
+                  <span>{property.project_size}</span>
+                </div>
+              ) : null}
             </div>
           </div>
 

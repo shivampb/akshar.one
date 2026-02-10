@@ -62,6 +62,10 @@ export interface Property {
   area_name?: string;
   map_url?: string;
   faqs?: { question: string; answer: string; }[];
+  // SEO Fields
+  meta_title?: string;
+  meta_description?: string;
+  keywords?: string;
 }
 
 export const properties: Property[] = [

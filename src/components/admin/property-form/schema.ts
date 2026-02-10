@@ -43,6 +43,10 @@ export const propertySchema = z.object({
         question: z.string().min(1, "Question is required"),
         answer: z.string().min(1, "Answer is required"),
     })).optional(),
+    // SEO Fields
+    meta_title: z.string().optional(),
+    meta_description: z.string().optional(),
+    keywords: z.string().optional(),
 });
 
 export type PropertyFormValues = z.infer<typeof propertySchema>;

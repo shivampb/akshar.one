@@ -19,6 +19,8 @@ import { PropertyBrochure } from "@/components/property-details/PropertyBrochure
 import { PropertyFAQ } from "@/components/property-details/PropertyFAQ";
 import { PropertyPhotosVideos } from "@/components/property-details/PropertyPhotosVideos";
 
+import { Helmet } from "react-helmet-async";
+
 const PropertyDetails = () => {
   const { slug } = useParams<{ slug: string }>();
   const [property, setProperty] = useState<Property | null>(null);
@@ -145,6 +147,17 @@ const PropertyDetails = () => {
 
   return (
     <Layout>
+      <Helmet>
+        <title>{property.meta_title || `${property.name} | Real Estate`}</title>
+        <meta
+          name="description"
+          content={property.meta_description || property.shortDescription}
+        />
+        {property.keywords && (
+          <meta name="keywords" content={property.keywords} />
+        )}
+      </Helmet>
+
       {/* Breadcrumb */}
       <section className="pt-28 pb-4">
         <div className="container-luxury">
