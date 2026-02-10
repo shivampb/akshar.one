@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import Admin from "@/components/pages/Admin";
+import AdminDashboard from "../../components/admin/AdminDashboard";
 
 export const metadata: Metadata = {
     title: "Admin Dashboard | Akshar One",
@@ -11,5 +11,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminPage() {
-    return <Admin />;
+    return <AdminDashboard />;
 }

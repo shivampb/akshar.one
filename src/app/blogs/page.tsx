@@ -3,15 +3,21 @@ import Blogs from "@/components/pages/Blogs";
 import { supabase } from "@/lib/supabase";
 import { Blog } from "@/data/blogs";
 
-export const metadata: Metadata = {
-    title: "Real Estate Insights & News | Akshar One Blog",
-    description: "Stay updated with the latest luxury real estate trends, market insights, and property news on the Akshar One blog.",
-    keywords: "real estate blog, luxury property news, property investment tips, real estate trends, akshar one insights",
-    openGraph: {
-        title: "Real Estate Insights & News | Akshar One Blog",
-        description: "Stay updated with the latest luxury real estate trends, market insights, and property news on the Akshar One blog.",
-    },
-};
+import { getPageMetadata } from "@/lib/metadata";
+
+export async function generateMetadata(): Promise<Metadata> {
+    const dynamicMetadata = await getPageMetadata("/blogs");
+
+    return {
+        title: dynamicMetadata.title || "Real Estate Insights & News | Akshar One Blog",
+        description: dynamicMetadata.description || "Stay updated with the latest luxury real estate trends, market insights, and property news on the Akshar One blog.",
+        keywords: dynamicMetadata.keywords || "real estate blog, luxury property news, property investment tips, real estate trends, akshar one insights",
+        openGraph: {
+            title: dynamicMetadata.title || "Real Estate Insights & News | Akshar One Blog",
+            description: dynamicMetadata.description || "Stay updated with the latest luxury real estate trends, market insights, and property news on the Akshar One blog.",
+        },
+    };
+}
 
 interface Category {
     id: number;

@@ -47,18 +47,34 @@ export const PropertyDialog = ({
     onSuccess,
 }: PropertyDialogProps) => {
 
-    const form = useForm<PropertyFormValues>({
-        resolver: zodResolver(propertySchema),
+    const form = useForm<any>({
+        resolver: zodResolver(propertySchema) as any,
         defaultValues: {
+            name: "",
             category: "Residential",
             type: "Apartment",
+            location: "",
+            address: "",
+            price: 0,
+            price_on_request: false,
+            shortDescription: "",
+            fullDescription: "",
             isFeatured: false,
-            features: { area: 0 },
+            features: { area: 0, facing: "" },
             images: [],
-            coordinates: { lat: 0, lng: 0 },
+            amenities: [],
             country: "",
+            state: "",
             city: "",
-        },
+            coordinates: { lat: 0, lng: 0 },
+            possession_date: "",
+            configuration: "",
+            possession_status: "",
+            meta_title: "",
+            meta_description: "",
+            keywords: "",
+            faqs: [],
+        } as PropertyFormValues,
     });
 
     useEffect(() => {

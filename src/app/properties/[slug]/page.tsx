@@ -86,7 +86,35 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
     const relatedProperties = await getRelatedProperties(property);
 
+    // Structured Data for Google
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "RealEstateListing",
+        "name": property.name,
+        "description": property.meta_description || property.shortDescription,
+        "image": property.images,
+        "url": `https://aksharone.com/properties/${property.slug}`,
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": property.address,
+            "addressLocality": property.city,
+            "addressRegion": property.state,
+            "addressCountry": property.country
+        },
+        "offers": {
+            "@type": "Offer",
+            "price": property.price,
+            "priceCurrency": "INR"
+        }
+    };
+
     return (
-        <PropertyDetails property={property} relatedProperties={relatedProperties} />
+        <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+            <PropertyDetails property={property} relatedProperties={relatedProperties} />
+        </>
     );
 }

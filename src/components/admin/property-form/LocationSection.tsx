@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useFormContext } from "react-hook-form";
 import { Country, State, City } from "country-state-city";
 import { Label } from "@/components/ui/label";
@@ -41,15 +41,33 @@ export const LocationSection = () => {
         return City.getCitiesOfState(selectedCountryCode, selectedStateCode);
     }, [selectedCountryCode, selectedStateCode]);
 
-    // Reset state and city when country changes
+    const isInitialMount = useRef(true);
+    const prevCountry = useRef(selectedCountryCode);
+    const prevState = useRef(selectedStateCode);
+
+    // Mark initial mount as complete after a short delay to allow form.reset to finish
     useEffect(() => {
-        setValue("state", "");
-        setValue("city", "");
+        const timer = setTimeout(() => {
+            isInitialMount.current = false;
+        }, 100);
+        return () => clearTimeout(timer);
+    }, []);
+
+    // Reset state and city when country changes (Manually by user)
+    useEffect(() => {
+        if (!isInitialMount.current && selectedCountryCode !== prevCountry.current) {
+            setValue("state", "");
+            setValue("city", "");
+        }
+        prevCountry.current = selectedCountryCode;
     }, [selectedCountryCode, setValue]);
 
-    // Reset city when state changes
+    // Reset city when state changes (Manually by user)
     useEffect(() => {
-        setValue("city", "");
+        if (!isInitialMount.current && selectedStateCode !== prevState.current) {
+            setValue("city", "");
+        }
+        prevState.current = selectedStateCode;
     }, [selectedStateCode, setValue]);
 
     // Update the main 'location' field whenever City, State or Country changes

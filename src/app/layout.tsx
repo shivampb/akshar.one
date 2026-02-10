@@ -40,6 +40,9 @@ export const metadata: Metadata = {
   },
 };
 
+import { PrismicPreview } from "@prismicio/next";
+import { repositoryName } from "@/prismicio";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -53,6 +56,7 @@ export default function RootLayout({
             {children}
           </Layout>
         </Providers>
+        <PrismicPreview repositoryName={repositoryName} />
       </body>
     </html>
   );

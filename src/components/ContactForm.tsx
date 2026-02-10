@@ -53,7 +53,7 @@ export const ContactForm = ({ propertyName }: ContactFormProps) => {
     const result = contactSchema.safeParse(formData);
     if (!result.success) {
       const fieldErrors: Partial<Record<keyof ContactFormData, string>> = {};
-      result.error.errors.forEach((err) => {
+      (result.error as any).errors.forEach((err: any) => {
         if (err.path[0]) {
           fieldErrors[err.path[0] as keyof ContactFormData] = err.message;
         }

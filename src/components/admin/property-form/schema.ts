@@ -6,7 +6,7 @@ export const propertySchema = z.object({
     type: z.string().min(1, "Type is required"),
     location: z.string().min(1, "Location is required"),
     address: z.string().min(1, "Address is required"),
-    price: z.number().min(0).optional().default(0),
+    price: z.number().min(0).default(0),
     price_on_request: z.boolean().optional().default(false),
     shortDescription: z.string().min(1, "Short description is required"),
     fullDescription: z.string().min(1, "Full description is required"),

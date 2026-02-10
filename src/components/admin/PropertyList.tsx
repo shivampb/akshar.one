@@ -82,7 +82,7 @@ export const PropertyList = ({ properties, onEdit, onDelete }: PropertyListProps
                                                 variant="ghost"
                                                 size="icon"
                                                 className="h-8 w-8 text-destructive hover:text-destructive/90"
-                                                onClick={() => onDelete(property.id)}
+                                                onClick={() => onDelete(String(property.id))}
                                             >
                                                 <Trash2 className="h-4 w-4" />
                                                 <span className="sr-only">Delete</span>

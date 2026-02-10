@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { Property } from "@/data/properties";
 import { Blog } from "@/data/blogs";
 import { supabase } from "@/lib/supabase";
@@ -15,9 +16,15 @@ import { PropertyList } from "@/components/admin/PropertyList";
 import { PropertyDialog } from "@/components/admin/PropertyDialog";
 import { BlogManager } from "@/components/admin/BlogManager";
 import { BlogDialog } from "@/components/admin/BlogDialog";
+import { PageSeoManagement } from "@/components/admin/PageSeoManagement";
 
 const Admin = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        const isAuth = localStorage.getItem("isAdminAuthenticated") === "true";
+        setIsAuthenticated(isAuth);
+    }, []);
 
     // Property State
     const [properties, setProperties] = useState<Property[]>([]);
@@ -30,12 +37,35 @@ const Admin = () => {
     const [editingBlog, setEditingBlog] = useState<Blog | null>(null);
     const [activeTab, setActiveTab] = useState("properties");
 
+    const params = useParams();
+    const pathname = usePathname();
+    const router = useRouter();
+
     useEffect(() => {
         if (isAuthenticated) {
             fetchProperties();
             fetchBlogs();
         }
     }, [isAuthenticated]);
+
+    // Handle Auto-opening Dialogs based on URL
+    useEffect(() => {
+        if (!isAuthenticated || properties.length === 0 && blogs.length === 0) return;
+
+        const id = params?.id;
+
+        if (pathname.includes('/properties/edit/') && id) {
+            const prop = properties.find(p => String(p.id) === String(id));
+            if (prop) startEditProperty(prop);
+        } else if (pathname.includes('/properties/add')) {
+            startAddProperty();
+        } else if (pathname.includes('/blogs/edit/') && id) {
+            const blog = blogs.find(b => String(b.id) === String(id));
+            if (blog) startEditBlog(blog);
+        } else if (pathname.includes('/blogs/add')) {
+            startAddBlog();
+        }
+    }, [isAuthenticated, pathname, params, properties, blogs]);
 
     const fetchProperties = async () => {
         const { data, error } = await supabase.from('properties').select('*');
@@ -79,8 +109,19 @@ const Admin = () => {
         }
     };
 
-    const handleLogout = () => {
-        setIsAuthenticated(false);
+    // Handlers to go back when dialog is closed
+    const onPropertyDialogOpenChange = (open: boolean) => {
+        setIsPropertyDialogOpen(open);
+        if (!open && (pathname.includes('/properties/edit/') || pathname.includes('/properties/add'))) {
+            router.push('/admin/properties');
+        }
+    };
+
+    const onBlogDialogOpenChange = (open: boolean) => {
+        setIsBlogDialogOpen(open);
+        if (!open && (pathname.includes('/blogs/edit/') || pathname.includes('/blogs/add'))) {
+            router.push('/admin/blogs');
+        }
     };
 
     // Property Handlers
@@ -110,6 +151,9 @@ const Admin = () => {
         setIsPropertyDialogOpen(false);
         setEditingProperty(null);
         fetchProperties();
+        if (pathname.includes('/properties/edit/') || pathname.includes('/properties/add')) {
+            router.push('/admin/properties');
+        }
     };
 
     // Blog Handlers
@@ -142,22 +186,11 @@ const Admin = () => {
     };
 
     if (!isAuthenticated) {
-        return <AdminLogin onLogin={() => setIsAuthenticated(true)} />;
+        return null; // AdminLayout handles the redirect
     }
 
     return (
-        <div className="container mx-auto px-4 py-8 pt-24 min-h-[calc(100vh-80px)]">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
-                    <p className="text-muted-foreground mt-1">Manage your website content and listings.</p>
-                </div>
-                <div className="flex gap-4">
-                    <Button variant="outline" onClick={handleLogout} className="gap-2">
-                        <LogOut className="h-4 w-4" /> Logout
-                    </Button>
-                </div>
-            </div>
+        <div className="space-y-6">
 
             <Tabs defaultValue="properties" value={activeTab} onValueChange={setActiveTab} className="space-y-6">
                 <div className="flex justify-between items-center">
@@ -170,11 +203,12 @@ const Admin = () => {
                         </TabsTrigger>
                     </TabsList>
 
-                    {activeTab === "properties" ? (
+                    {activeTab === "properties" && (
                         <Button onClick={startAddProperty} className="gap-2">
                             <Plus className="h-4 w-4" /> Add Property
                         </Button>
-                    ) : (
+                    )}
+                    {activeTab === "blogs" && (
                         <Button onClick={startAddBlog} className="gap-2">
                             <Plus className="h-4 w-4" /> New Post
                         </Button>
@@ -200,14 +234,14 @@ const Admin = () => {
 
             <PropertyDialog
                 open={isPropertyDialogOpen}
-                onOpenChange={setIsPropertyDialogOpen}
+                onOpenChange={onPropertyDialogOpenChange}
                 editingProperty={editingProperty}
                 onSuccess={handlePropertyDialogSuccess}
             />
 
             <BlogDialog
                 open={isBlogDialogOpen}
-                onOpenChange={setIsBlogDialogOpen}
+                onOpenChange={onBlogDialogOpenChange}
                 editingBlog={editingBlog}
                 onSuccess={handleBlogDialogSuccess}
             />

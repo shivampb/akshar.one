@@ -6,7 +6,8 @@ import { Award, Users, Target, Heart, CheckCircle } from "lucide-react";
 // import { Layout } from "@/components/layout/Layout"; // Removed
 import { SectionHeading } from "@/components/SectionHeading";
 import { CTASection } from "@/components/CTASection";
-import heroImage from "@/assets/hero-home.jpg";
+// Asset paths (these are in public/assets)
+const heroImage = "/assets/hero-home.jpg";
 
 const values = [
   {
@@ -50,7 +51,7 @@ const About = () => {
       <section className="relative pt-32 pb-20 lg:pb-32">
         <div className="absolute inset-0 -z-10">
           <img
-            src={heroImage.src}
+            src={heroImage}
             alt="Luxury property"
             className="w-full h-full object-cover opacity-10"
           />
@@ -139,7 +140,7 @@ const About = () => {
             >
               <div className="aspect-[4/5] rounded-sm overflow-hidden">
                 <img
-                  src={heroImage.src}
+                  src={heroImage}
                   alt="Luxury property exterior"
                   className="w-full h-full object-cover"
                 />
