@@ -53,7 +53,7 @@ export const PropertyLocation = ({ property }: PropertyLocationProps) => {
 
             <div className="aspect-video rounded-sm overflow-hidden bg-muted">
                 <iframe
-                    src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${property.coordinates && property.coordinates.lat !== 0
+                    src={property.map_url || `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${property.coordinates && property.coordinates.lat !== 0
                         ? `${property.coordinates.lat},${property.coordinates.lng}`
                         : encodeURIComponent(property.address)
                         }`}

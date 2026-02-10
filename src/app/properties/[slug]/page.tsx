@@ -44,18 +44,26 @@ function mapPrismicToProperty(doc: any): Property {
     fullDescription: prismic.asHTML(data.full_description) || "",
     images: images,
     features: {
-      area: data.area || 0,
+      area: typeof data.area === 'string' ? parseFloat(data.area) || 0 : (data.area || 0),
     },
     amenities: amenities as string[],
     isFeatured: data.is_featured || false,
+
+    // Project Specifications
+    project_units: data.project_units || undefined,
+    project_area: data.project_area || undefined,
+    project_size: data.project_size || undefined,
+    launch_date: data.launch_date || undefined,
     possession_status: data.possession_status || undefined,
-    possession_date: data.possession_date,
-    configuration: data.configuration,
+    possession_date: data.possession_date || undefined,
+    configuration: data.configuration || undefined,
+    rera_id: prismic.asText(data.rera_id) || undefined,
+    map_url: data.map_url || undefined,
 
     // SEO
-    meta_title: data.meta_title,
-    meta_description: data.meta_description,
-    keywords: data.keywords,
+    meta_title: data.meta_title || undefined,
+    meta_description: data.meta_description || undefined,
+    keywords: data.keywords || undefined,
   };
 }
 

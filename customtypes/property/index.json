@@ -3,6 +3,7 @@
   "label": "Property",
   "repeatable": true,
   "status": true,
+  "format": "custom",
   "json": {
     "Main": {
       "uid": {
@@ -93,7 +94,7 @@
           "label": "Full Description",
           "placeholder": "Detailed description of the property",
           "allowTargetBlank": true,
-          "multi": "paragraph,heading2,heading3,strong,em,hyperlink,list-item"
+          "multi": "paragraph,heading2,heading3,strong,em,hyperlink,list-item,preformatted,image,embed,heading1,o-list-item,rtl,heading4,heading5,heading6"
         }
       },
       "is_featured": {
@@ -101,6 +102,20 @@
         "config": {
           "label": "Show on Home Page",
           "default_value": false
+        }
+      },
+      "gallery": {
+        "type": "Group",
+        "config": {
+          "label": "Image Gallery (Add many photos here)",
+          "fields": {
+            "image": {
+              "type": "Image",
+              "config": {
+                "label": "Photo"
+              }
+            }
+          }
         }
       }
     },
@@ -119,18 +134,48 @@
           "placeholder": ""
         }
       },
-      "area": {
-        "type": "Number",
-        "config": {
-          "label": "Area (Sq.Ft)",
-          "placeholder": ""
-        }
-      },
       "configuration": {
         "type": "Text",
         "config": {
           "label": "Configuration",
           "placeholder": "e.g. 3 BHK, 4 BHK"
+        }
+      },
+      "area": {
+        "type": "Text",
+        "config": {
+          "label": "Area (Sq.Ft)",
+          "placeholder": "e.g. 1185 - 1193 "
+        }
+      },
+      "project_area": {
+        "type": "Text",
+        "config": {
+          "label": "Project Area",
+          "placeholder": "e.g. 0.67 Acres"
+        }
+      },
+      "rera_id": {
+        "type": "StructuredText",
+        "config": {
+          "label": "Rera Id",
+          "placeholder": "e.g. PR/GJ/AHMEDABAD/AHM",
+          "allowTargetBlank": true,
+          "single": "heading5,strong,em,hyperlink,paragraph,heading6"
+        }
+      },
+      "launch_date": {
+        "type": "Text",
+        "config": {
+          "label": "Launch Date",
+          "placeholder": "e.g. Dec, 2022"
+        }
+      },
+      "project_size": {
+        "type": "Text",
+        "config": {
+          "label": "Project Size",
+          "placeholder": "e.g. 2 Buildings - 104 units"
         }
       },
       "possession_status": {
@@ -141,9 +186,10 @@
         }
       },
       "possession_date": {
-        "type": "Date",
+        "type": "Text",
         "config": {
-          "label": "Possession Date"
+          "label": "Possession Date",
+          "placeholder": "e.g. Dec, 2027"
         }
       },
       "amenities": {
@@ -161,18 +207,11 @@
           }
         }
       },
-      "gallery": {
-        "type": "Group",
+      "map_url": {
+        "type": "Text",
         "config": {
-          "label": "Image Gallery",
-          "fields": {
-            "image": {
-              "type": "Image",
-              "config": {
-                "label": "Photo"
-              }
-            }
-          }
+          "label": "Google Map Embed Link",
+          "placeholder": "Paste the Google Maps iframe src URL or share link here"
         }
       }
     },
@@ -199,6 +238,5 @@
         }
       }
     }
-  },
-  "format": "custom"
+  }
 }

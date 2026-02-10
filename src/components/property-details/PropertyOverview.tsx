@@ -15,15 +15,10 @@ export const PropertyOverview = ({ fullDescription }: PropertyOverviewProps) => 
                 Property Overview
             </h2>
             <div className="gold-line mb-6 mx-0" />
-            <div className="text-muted-foreground leading-relaxed space-y-4">
-                {fullDescription.split('\n').map((paragraph, index) => (
-                    paragraph.trim() && (
-                        <p key={index} className="mb-4 last:mb-0">
-                            {paragraph}
-                        </p>
-                    )
-                ))}
-            </div>
+            <div
+                className="prose prose-gold max-w-none text-muted-foreground"
+                dangerouslySetInnerHTML={{ __html: fullDescription }}
+            />
         </motion.div>
     );
 };

@@ -363,6 +363,21 @@ export type PageDocument<Lang extends string = string> =
   prismic.PrismicDocumentWithUID<Simplify<PageDocumentData>, "page", Lang>;
 
 /**
+ * Item in *Property → Image Gallery (Add many photos here)*
+ */
+export interface PropertyDocumentDataGalleryItem {
+  /**
+   * Photo field in *Property → Image Gallery (Add many photos here)*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: property.gallery[].image
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  image: prismic.ImageField<never>;
+}
+
+/**
  * Item in *Property → Amenities*
  */
 export interface PropertyDocumentDataAmenitiesItem {
@@ -375,21 +390,6 @@ export interface PropertyDocumentDataAmenitiesItem {
    * - **Documentation**: https://prismic.io/docs/fields/text
    */
   name: prismic.KeyTextField;
-}
-
-/**
- * Item in *Property → Image Gallery*
- */
-export interface PropertyDocumentDataGalleryItem {
-  /**
-   * Photo field in *Property → Image Gallery*
-   *
-   * - **Field Type**: Image
-   * - **Placeholder**: *None*
-   * - **API ID Path**: property.gallery[].image
-   * - **Documentation**: https://prismic.io/docs/fields/image
-   */
-  image: prismic.ImageField<never>;
 }
 
 /**
@@ -518,7 +518,18 @@ interface PropertyDocumentData {
    * - **Tab**: Main
    * - **Documentation**: https://prismic.io/docs/fields/boolean
    */
-  is_featured: prismic.BooleanField; /**
+  is_featured: prismic.BooleanField;
+
+  /**
+   * Image Gallery (Add many photos here) field in *Property*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: property.gallery[]
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  gallery: prismic.GroupField<Simplify<PropertyDocumentDataGalleryItem>>; /**
    * Location Name field in *Property*
    *
    * - **Field Type**: Text
@@ -541,17 +552,6 @@ interface PropertyDocumentData {
   address: prismic.KeyTextField;
 
   /**
-   * Area (Sq.Ft) field in *Property*
-   *
-   * - **Field Type**: Number
-   * - **Placeholder**: *None*
-   * - **API ID Path**: property.area
-   * - **Tab**: Details
-   * - **Documentation**: https://prismic.io/docs/fields/number
-   */
-  area: prismic.NumberField;
-
-  /**
    * Configuration field in *Property*
    *
    * - **Field Type**: Text
@@ -561,6 +561,61 @@ interface PropertyDocumentData {
    * - **Documentation**: https://prismic.io/docs/fields/text
    */
   configuration: prismic.KeyTextField;
+
+  /**
+   * Area (Sq.Ft) field in *Property*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: e.g. 1185 - 1193
+   * - **API ID Path**: property.area
+   * - **Tab**: Details
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  area: prismic.KeyTextField;
+
+  /**
+   * Project Area field in *Property*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: e.g. 0.67 Acres
+   * - **API ID Path**: property.project_area
+   * - **Tab**: Details
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  project_area: prismic.KeyTextField;
+
+  /**
+   * Rera Id field in *Property*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: e.g. PR/GJ/AHMEDABAD/AHM
+   * - **API ID Path**: property.rera_id
+   * - **Tab**: Details
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  rera_id: prismic.RichTextField;
+
+  /**
+   * Launch Date field in *Property*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: e.g. Dec, 2022
+   * - **API ID Path**: property.launch_date
+   * - **Tab**: Details
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  launch_date: prismic.KeyTextField;
+
+  /**
+   * Project Size field in *Property*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: e.g. 2 Buildings - 104 units
+   * - **API ID Path**: property.project_size
+   * - **Tab**: Details
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  project_size: prismic.KeyTextField;
 
   /**
    * Possession Status field in *Property*
@@ -576,13 +631,13 @@ interface PropertyDocumentData {
   /**
    * Possession Date field in *Property*
    *
-   * - **Field Type**: Date
-   * - **Placeholder**: *None*
+   * - **Field Type**: Text
+   * - **Placeholder**: e.g. Dec, 2027
    * - **API ID Path**: property.possession_date
    * - **Tab**: Details
-   * - **Documentation**: https://prismic.io/docs/fields/date
+   * - **Documentation**: https://prismic.io/docs/fields/text
    */
-  possession_date: prismic.DateField;
+  possession_date: prismic.KeyTextField;
 
   /**
    * Amenities field in *Property*
@@ -596,15 +651,15 @@ interface PropertyDocumentData {
   amenities: prismic.GroupField<Simplify<PropertyDocumentDataAmenitiesItem>>;
 
   /**
-   * Image Gallery field in *Property*
+   * Google Map Embed Link field in *Property*
    *
-   * - **Field Type**: Group
-   * - **Placeholder**: *None*
-   * - **API ID Path**: property.gallery[]
+   * - **Field Type**: Text
+   * - **Placeholder**: Paste the Google Maps iframe src URL or share link here
+   * - **API ID Path**: property.map_url
    * - **Tab**: Details
-   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   * - **Documentation**: https://prismic.io/docs/fields/text
    */
-  gallery: prismic.GroupField<Simplify<PropertyDocumentDataGalleryItem>>; /**
+  map_url: prismic.KeyTextField; /**
    * Meta Title field in *Property*
    *
    * - **Field Type**: Text
@@ -1305,8 +1360,8 @@ declare module "@prismicio/client" {
       PageDocumentDataSlices1Slice,
       PropertyDocument,
       PropertyDocumentData,
-      PropertyDocumentDataAmenitiesItem,
       PropertyDocumentDataGalleryItem,
+      PropertyDocumentDataAmenitiesItem,
       AllDocumentTypes,
       AlternateGridSlice,
       AlternateGridSliceDefaultPrimaryItemsItem,
