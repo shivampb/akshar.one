@@ -23,7 +23,7 @@ import Link from "next/link";
 interface BlogManagerProps {
     blogs: Blog[];
     onEdit: (blog: Blog) => void;
-    onDelete: (id: number) => void;
+    onDelete: (id: string | number) => void;
 }
 
 export const BlogManager = ({ blogs, onEdit, onDelete }: BlogManagerProps) => {

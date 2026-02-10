@@ -13,8 +13,8 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { BlogCard } from "@/components/BlogCard";
 import { HeroSearchBar } from "@/components/HeroSearchBar";
 import { testimonials } from "@/data/testimonials";
-import { blogs } from "@/data/blogs";
-import { supabase } from "@/lib/supabase";
+// import { blogs } from "@/data/blogs"; // Removed
+// import { supabase } from "@/lib/supabase"; // Removed
 import { Property } from "@/data/properties";
 import useEmblaCarousel from "embla-carousel-react";
 
@@ -77,8 +77,12 @@ const stats = [
   { value: "50+", label: "Luxury Properties" },
 ];
 
-const Home = () => {
-  const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
+interface HomeProps {
+  featuredProperties: Property[];
+  latestBlogs: any[]; // Using any[] temporarily or import Blog type if compatible
+}
+
+const Home = ({ featuredProperties, latestBlogs }: HomeProps) => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
   // Embla Carousel Hook - Continuous Auto Scroll for Properties
@@ -88,22 +92,6 @@ const Home = () => {
   const [emblaRefBlogs] = useEmblaCarousel({ loop: true, align: "start" });
 
   useEffect(() => {
-    const fetchFeatured = async () => {
-      if (!supabase) return;
-
-      // Fetches ALL featured properties (limit removed)
-      const { data } = await supabase
-        .from('properties')
-        .select('*')
-        .eq('isFeatured', true);
-
-      if (data) {
-        setFeaturedProperties(data as Property[]);
-      }
-    };
-
-    fetchFeatured();
-
     const timer = setInterval(() => {
       setCurrentSlideIndex((prev) => (prev + 1) % heroContent.length);
     }, 8000); // 8 seconds for video to play more
@@ -361,7 +349,7 @@ const Home = () => {
           {/* Blogs Carousel */}
           <div className="overflow-hidden" ref={emblaRefBlogs}>
             <div className="flex -ml-8">
-              {blogs.map((blog, index) => (
+              {latestBlogs.map((blog, index) => (
                 <div key={blog.id} className="flex-[0_0_85%] md:flex-[0_0_50%] lg:flex-[0_0_33.333%] pl-8 min-w-0">
                   <BlogCard blog={blog} index={index} />
                 </div>

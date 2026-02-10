@@ -12,7 +12,7 @@ import {
   PropertyType,
   Property,
 } from "@/data/properties";
-import { supabase } from "@/lib/supabase";
+// import { supabase } from "@/lib/supabase"; // Removed
 import { Country, State, City } from "country-state-city";
 
 const priceRanges = [
@@ -23,9 +23,13 @@ const priceRanges = [
   { label: "Over ₹20 Crore", min: 200000000, max: Infinity },
 ];
 
-const Properties = () => {
+interface PropertiesProps {
+  initialProperties: Property[];
+}
+
+const Properties = ({ initialProperties }: PropertiesProps) => {
   const searchParams = useSearchParams();
-  const [properties, setProperties] = useState<Property[]>([]);
+  const [properties, setProperties] = useState<Property[]>(initialProperties);
   const [selectedType, setSelectedType] = useState<PropertyType | "All">("All");
   const [selectedPriceRange, setSelectedPriceRange] = useState(0);
 
@@ -37,18 +41,7 @@ const Properties = () => {
 
   const [showFilters, setShowFilters] = useState(false);
 
-  useEffect(() => {
-    const fetchProperties = async () => {
-      if (!supabase) return;
-      const { data, error } = await supabase.from('properties').select('*');
-      if (error) {
-        console.error('Error fetching properties:', error);
-      } else {
-        setProperties(data as Property[]);
-      }
-    };
-    fetchProperties();
-  }, []);
+  // Removed internal fetching logic as data is passed via props
 
   // Read URL parameters and set filters
   useEffect(() => {

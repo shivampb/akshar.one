@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import Blogs from "@/components/pages/Blogs";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/prismicio";
 import { Blog } from "@/data/blogs";
-
+import * as prismic from "@prismicio/client";
 import { getPageMetadata } from "@/lib/metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -34,62 +34,50 @@ interface Category {
   slug: string;
 }
 
-async function getCategories() {
-  if (!supabase) return [];
+function mapPrismicToBlog(doc: any): Blog {
+  const data = doc.data;
+  return {
+    id: doc.id,
+    title: data.title || "",
+    excerpt: data.excerpt || "",
+    category: data.category || "Uncategorized",
+    date: data.publish_date
+      ? new Date(data.publish_date).toLocaleDateString()
+      : new Date(doc.first_publication_date).toLocaleDateString(),
+    image: prismic.isFilled.image(data.featured_image) ? data.featured_image.url || "" : "",
+    author: data.author || "Admin",
+    content: (Array.isArray(data.content) ? prismic.asHTML(data.content) : "") || "",
+    slug: doc.uid,
 
-  const { data } = await supabase.from("categories").select("*").order("name");
-
-  return (data || []) as Category[];
-}
-
-async function getBlogs() {
-  if (!supabase) return [];
-
-  const { data, error } = await supabase
-    .from("blogs")
-    .select(
-      `
-          *,
-          categories (
-              name
-          )
-      `,
-    )
-    .order("created_at", { ascending: false });
-
-  if (error || !data) {
-    console.error("Error fetching blogs:", error);
-    return [];
-  }
-
-  // Map to Blog interface
-  const mappedBlogs: Blog[] = data.map(
-    (item: {
-      id: string;
-      title: string;
-      slug: string;
-      excerpt: string;
-      content: string;
-      categories?: { name: string };
-      created_at: string;
-    }) => ({
-      id: item.id,
-      title: item.title,
-      slug: item.slug,
-      excerpt: item.excerpt,
-      content: item.content,
-      category: item.categories?.name || "Uncategorized",
-      date: new Date(item.created_at).toLocaleDateString(),
-      image: item.image_url,
-      author: item.author || "Admin",
-    }),
-  );
-
-  return mappedBlogs;
+    // SEO
+    meta_title: data.meta_title || undefined,
+    meta_description: data.meta_description || undefined,
+    keywords: data.keywords || undefined,
+    faqs: data.faqs?.map((faq: any) => ({
+      question: faq.question || "",
+      answer: faq.answer // Keep as Rich Text for component to handle, or convert if needed
+    })) || [],
+  };
 }
 
 export default async function BlogsPage() {
-  const [categories, blogs] = await Promise.all([getCategories(), getBlogs()]);
+  const client = createClient();
+  const blogDocs = await client.getAllByType("blog_post", {
+    orderings: {
+      field: "document.first_publication_date",
+      direction: "desc",
+    },
+  });
+
+  const blogs = blogDocs.map(mapPrismicToBlog);
+
+  // Extract unique categories from blogs
+  const uniqueCategories = Array.from(new Set(blogs.map(b => b.category)));
+  const categories: Category[] = uniqueCategories.map((name, index) => ({
+    id: index,
+    name: name,
+    slug: name.toLowerCase().replace(/\s+/g, '-')
+  }));
 
   return <Blogs initialBlogs={blogs} categories={categories} />;
 }

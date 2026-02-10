@@ -1,7 +1,7 @@
 import ReactMetaData from "react-markdown";
 
 export interface Blog {
-    id: number;
+    id: string | number;
     title: string;
     excerpt: string;
     category: string;
@@ -14,6 +14,10 @@ export interface Blog {
     meta_title?: string;
     meta_description?: string;
     keywords?: string;
+    faqs?: {
+        question: string;
+        answer: any;
+    }[];
 }
 
 // ... (interfaces remain unchanged)

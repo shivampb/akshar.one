@@ -87,6 +87,10 @@ export default function BlogsManagement() {
           categories?: { name: string };
           created_at: string;
           image_url: string;
+          author?: string;
+          meta_title?: string;
+          meta_description?: string;
+          keywords?: string;
         }) => ({
           id: item.id,
           title: item.title,
@@ -112,7 +116,7 @@ export default function BlogsManagement() {
     }
   }
 
-  async function handleDelete(id: number) {
+  async function handleDelete(id: string | number) {
     if (!confirm("Are you sure you want to delete this blog post?")) return;
 
     if (!supabase) return;

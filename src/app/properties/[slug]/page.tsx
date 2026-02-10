@@ -1,66 +1,72 @@
-// Suspense imported but not used - kept for future async component boundaries
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import PropertyDetails from "@/components/pages/PropertyDetails";
-import { supabase } from "@/lib/supabase";
-import { Property } from "@/data/properties";
+import { createClient } from "@/prismicio";
+import { Property, PropertyType } from "@/data/properties";
+import * as prismic from "@prismicio/client";
 
-// Fetch property data
-async function getProperty(slug: string) {
-  if (!supabase) return null;
+type Params = { slug: string };
 
-  const { data, error } = await supabase
-    .from("properties")
-    .select("*")
-    .eq("slug", slug)
-    .single();
+// Helper to map Prismic document to Property interface
+function mapPrismicToProperty(doc: any): Property {
+  const data = doc.data;
 
-  if (error || !data) {
-    return null;
+  // Collect all images from main image and gallery
+  const images: string[] = [];
+  if (prismic.isFilled.image(data.main_image)) {
+    images.push(data.main_image.url || "");
   }
-  return data as Property;
-}
-
-// Fetch related properties
-async function getRelatedProperties(property: Property) {
-  if (!supabase) return [];
-
-  let relatedData = null;
-
-  // Try fetching by area
-  if (property.area_name) {
-    const { data } = await supabase
-      .from("properties")
-      .select("*")
-      .eq("area_name", property.area_name)
-      .neq("id", property.id)
-      .limit(3);
-
-    relatedData = data;
+  if (data.gallery) {
+    data.gallery.forEach((item: any) => {
+      if (prismic.isFilled.image(item.image)) {
+        images.push(item.image.url || "");
+      }
+    });
   }
 
-  // Fallback to type if needed
-  if (!relatedData || relatedData.length === 0) {
-    const { data } = await supabase
-      .from("properties")
-      .select("*")
-      .eq("type", property.type)
-      .neq("id", property.id)
-      .limit(3);
+  // Map amenities group to string array
+  const amenities: string[] = data.amenities
+    ? data.amenities.map((item: any) => item.name).filter(Boolean)
+    : [];
 
-    relatedData = data;
-  }
+  return {
+    id: doc.id,
+    name: data.name || "",
+    slug: doc.uid,
+    category: data.category || "Residential",
+    type: (data.type as PropertyType) || "Apartment",
+    location: data.location || "",
+    address: data.address || "",
+    price: data.price || 0,
+    priceLabel: data.price_on_request ? "Price on Request" : `₹${(data.price || 0).toLocaleString('en-IN')}`,
+    price_on_request: data.price_on_request || false,
+    shortDescription: data.short_description || "",
+    fullDescription: prismic.asHTML(data.full_description) || "",
+    images: images,
+    features: {
+      area: data.area || 0,
+    },
+    amenities: amenities as string[],
+    isFeatured: data.is_featured || false,
+    possession_status: data.possession_status || undefined,
+    possession_date: data.possession_date,
+    configuration: data.configuration,
 
-  return (relatedData || []) as Property[];
+    // SEO
+    meta_title: data.meta_title,
+    meta_description: data.meta_description,
+    keywords: data.keywords,
+  };
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<Params>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const property = await getProperty(slug);
+  const client = createClient();
+  const property = await client.getByUID("property", slug).catch(() => null);
 
   if (!property) {
     return {
@@ -69,13 +75,13 @@ export async function generateMetadata({
   }
 
   return {
-    title: property.meta_title || `${property.name} | Real Estate`,
-    description: property.meta_description || property.shortDescription,
-    keywords: property.keywords,
+    title: property.data.meta_title || `${property.data.name} | Real Estate`,
+    description: property.data.meta_description || property.data.short_description,
+    keywords: property.data.keywords,
     openGraph: {
-      title: property.meta_title || `${property.name} | Real Estate`,
-      description: property.meta_description || property.shortDescription,
-      images: property.images?.length > 0 ? [property.images[0]] : [],
+      title: property.data.meta_title || `${property.data.name} | Real Estate` || undefined,
+      description: property.data.meta_description || property.data.short_description || undefined,
+      images: prismic.isFilled.image(property.data.main_image) ? [property.data.main_image.url || ""] : [],
     },
   };
 }
@@ -83,16 +89,30 @@ export async function generateMetadata({
 export default async function Page({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<Params>;
 }) {
   const { slug } = await params;
-  const property = await getProperty(slug);
+  const client = createClient();
 
-  if (!property) {
+  const propertyDoc = await client.getByUID("property", slug).catch(() => null);
+
+  if (!propertyDoc) {
     notFound();
   }
 
-  const relatedProperties = await getRelatedProperties(property);
+  const property = mapPrismicToProperty(propertyDoc);
+
+  // Fetch related properties (basic implementation matching existing logic)
+  // We can't easily query by area_name if it's not a clear field, so we fallback to type or category
+  const relatedDocs = await client.getAllByType("property", {
+    limit: 3,
+    filters: [
+      prismic.filter.at("my.property.type", property.type),
+      prismic.filter.not("document.id", property.id)
+    ]
+  });
+
+  const relatedProperties = relatedDocs.map(mapPrismicToProperty);
 
   // Structured Data for Google
   const jsonLd = {
@@ -105,9 +125,7 @@ export default async function Page({
     address: {
       "@type": "PostalAddress",
       streetAddress: property.address,
-      addressLocality: property.city,
-      addressRegion: property.state,
-      addressCountry: property.country,
+      addressLocality: property.location, // Approximate
     },
     offers: {
       "@type": "Offer",
@@ -128,4 +146,13 @@ export default async function Page({
       />
     </>
   );
+}
+
+export async function generateStaticParams() {
+  const client = createClient();
+  const properties = await client.getAllByType("property");
+
+  return properties.map((property) => {
+    return { slug: property.uid };
+  });
 }

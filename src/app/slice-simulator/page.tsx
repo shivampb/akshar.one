@@ -10,7 +10,7 @@ interface SliceSimulatorPageProps {
   readonly searchParams?: Record<string, string | string[]>;
 }
 
-export default function SliceSimulatorPage(): JSX.Element {
+export default function SliceSimulatorPage() {
   return (
     <div className="flex items-center justify-center min-h-screen">
       <p className="text-center">

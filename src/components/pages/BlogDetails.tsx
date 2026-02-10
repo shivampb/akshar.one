@@ -3,21 +3,14 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowLeft, Share2 } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-// import { Layout } from "@/components/layout/Layout"; // Removed
+import { PrismicRichText } from "@prismicio/react";
 import { Blog } from "@/data/blogs";
-// import { Helmet } from "react-helmet-async"; // Removed
 
 interface BlogDetailsProps {
     blog: Blog;
 }
 
 const BlogDetails = ({ blog }: BlogDetailsProps) => {
-    // Scroll to top on mount
-    // useEffect(() => {
-    //    window.scrollTo(0, 0);
-    // }, []);
-    // Next.js handles scrolling usually.
 
     if (!blog) {
         return (
@@ -115,16 +108,38 @@ const BlogDetails = ({ blog }: BlogDetailsProps) => {
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="prose prose-lg md:prose-xl prose-stone mx-auto
-                        prose-headings:font-sans prose-headings:font-bold prose-headings:text-foreground
-                        prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:font-normal
-                        prose-strong:text-foreground prose-strong:font-bold
-                        prose-a:text-gold prose-a:no-underline hover:prose-a:underline
-                        marker:text-gold"
+                        className="prose prose-lg md:prose-xl prose-stone mx-auto"
                     >
-                        {/* @ts-ignore */}
-                        <ReactMarkdown>{blog.content}</ReactMarkdown>
+                        {/* We use a div to wrap formatted content if it's already HTML string from mapPrismicToBlog */}
+                        <div dangerouslySetInnerHTML={{ __html: blog.content }} />
                     </motion.div>
+
+                    {/* FAQs Section */}
+                    {blog.faqs && blog.faqs.length > 0 && (
+                        <div className="mt-16 pt-8 border-t border-border">
+                            <h2 className="text-2xl font-serif font-bold mb-8">Frequently Asked Questions</h2>
+                            <div className="space-y-4">
+                                {blog.faqs.map((faq, index) => (
+                                    <div key={index} className="border border-border rounded-lg overflow-hidden">
+                                        <details className="group">
+                                            <summary className="flex justify-between items-center font-medium cursor-pointer list-none p-4 bg-secondary/20 hover:bg-secondary/40 transition-colors">
+                                                <span>{faq.question}</span>
+                                                <span className="transition group-open:rotate-180">
+                                                    <svg fill="none" height="24" shapeRendering="geometricPrecision" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+                                                </span>
+                                            </summary>
+                                            <div className="text-muted-foreground p-4 bg-background border-t border-border prose prose-sm max-w-none">
+                                                {/* Use PrismicRichText for the answer if it's structured text, or simple render if it's text. 
+                                                    Since we mapped it as 'any' in blogs.ts but it comes from Prismic Group StructuredText, 
+                                                    we should treat it as Rich Text. */}
+                                                <PrismicRichText field={faq.answer} />
+                                            </div>
+                                        </details>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     {/* Footer with Tags/Share (Optional) */}
                     <div className="mt-16 pt-8 border-t border-border">

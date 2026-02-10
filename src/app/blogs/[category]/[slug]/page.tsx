@@ -1,65 +1,54 @@
-// Suspense imported but not used - kept for future async component boundaries
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import BlogDetails from "@/components/pages/BlogDetails";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/prismicio";
 import { Blog } from "@/data/blogs";
+import * as prismic from "@prismicio/client";
 
-async function getBlog(slug: string) {
-  if (!supabase) return null;
+type Params = { slug: string; category: string };
 
-  let queryBuilder = supabase.from("blogs").select(`
-          *,
-          categories (
-              name
-          )
-      `);
-
-  // Check if it's purely numeric, might be an ID
-  if (/^\d+$/.test(slug)) {
-    queryBuilder = queryBuilder.or(`id.eq.${slug},slug.eq.${slug}`);
-  } else {
-    queryBuilder = queryBuilder.eq("slug", slug);
-  }
-
-  const { data, error } = await queryBuilder.single();
-
-  if (error || !data) {
-    // console.error("Error fetching blog:", error);
-    return null;
-  }
-
-  const mappedBlog: Blog = {
-    id: data.id,
-    title: data.title,
-    slug: data.slug,
-    excerpt: data.excerpt,
-    content: data.content,
-    category: data.categories?.name || "Uncategorized",
-    date: new Date(data.created_at).toLocaleDateString(),
-    image: data.image_url,
+function mapPrismicToBlog(doc: any): Blog {
+  const data = doc.data;
+  return {
+    id: doc.id,
+    title: data.title || "",
+    excerpt: data.excerpt || "",
+    category: data.category || "Uncategorized",
+    date: data.publish_date
+      ? new Date(data.publish_date).toLocaleDateString()
+      : new Date(doc.first_publication_date).toLocaleDateString(),
+    image: prismic.isFilled.image(data.featured_image) ? data.featured_image.url || "" : "",
     author: data.author || "Admin",
-    meta_title: data.meta_title,
-    meta_description: data.meta_description,
-    keywords: data.keywords,
-  };
+    content: (Array.isArray(data.content) ? prismic.asHTML(data.content) : "") || "",
+    slug: doc.uid,
 
-  return mappedBlog;
+    // SEO
+    meta_title: data.meta_title || undefined,
+    meta_description: data.meta_description || undefined,
+    keywords: data.keywords || undefined,
+    faqs: data.faqs?.map((faq: any) => ({
+      question: faq.question || "",
+      answer: faq.answer
+    })) || [],
+  };
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string; category: string }>;
+  params: Promise<Params>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const blog = await getBlog(slug);
+  const client = createClient();
+  const blogDoc = await client.getByUID("blog_post", slug).catch(() => null);
 
-  if (!blog) {
+  if (!blogDoc) {
     return {
       title: "Blog Not Found",
     };
   }
+
+  const blog = mapPrismicToBlog(blogDoc);
 
   return {
     title: blog.meta_title || `${blog.title} | Real Estate Insights`,
@@ -67,8 +56,8 @@ export async function generateMetadata({
     keywords: blog.keywords,
     openGraph: {
       type: "article",
-      title: blog.meta_title || `${blog.title} | Real Estate Insights`,
-      description: blog.meta_description || blog.excerpt,
+      title: blog.meta_title || `${blog.title} | Real Estate Insights` || undefined,
+      description: blog.meta_description || blog.excerpt || undefined,
       images: [blog.image],
     },
   };
@@ -77,14 +66,37 @@ export async function generateMetadata({
 export default async function BlogPostPage({
   params,
 }: {
-  params: Promise<{ slug: string; category: string }>;
+  params: Promise<Params>;
 }) {
   const { slug } = await params;
-  const blog = await getBlog(slug);
+  const client = createClient();
 
-  if (!blog) {
+  const blogDoc = await client.getByUID("blog_post", slug).catch(() => null);
+
+  if (!blogDoc) {
     notFound();
   }
 
+  const blog = mapPrismicToBlog(blogDoc);
+
   return <BlogDetails blog={blog} />;
+}
+
+export async function generateStaticParams() {
+  const client = createClient();
+  const blogs = await client.getAllByType("blog_post");
+
+  return blogs.map((blog) => {
+    // We need to match the URL structure: /blogs/[category]/[slug]
+    // Note: If the category in Prismic changes, the URL changes.
+    // Ideally we should slugify the category.
+    const category = blog.data.category
+      ? blog.data.category.toLowerCase().replace(/\s+/g, '-')
+      : 'uncategorized';
+
+    return {
+      slug: blog.uid,
+      category: category
+    };
+  });
 }

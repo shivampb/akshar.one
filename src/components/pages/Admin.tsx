@@ -167,7 +167,7 @@ const Admin = () => {
         setIsBlogDialogOpen(true);
     };
 
-    const handleDeleteBlog = async (id: number) => {
+    const handleDeleteBlog = async (id: number | string) => {
         if (confirm("Are you sure you want to delete this blog post?")) {
             const { error } = await supabase.from('blogs').delete().eq('id', id);
             if (error) {

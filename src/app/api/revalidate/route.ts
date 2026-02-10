@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   // Verify the webhook token for security
@@ -12,7 +12,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   try {
     // Revalidate Prismic cache
-    revalidateTag("prismic");
+    revalidatePath("/", "layout");
     return NextResponse.json({ revalidated: true, now: Date.now() });
   } catch (error) {
     console.error("Revalidation failed:", error);
