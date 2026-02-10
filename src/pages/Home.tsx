@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Shield, Award, Gem, Building } from "lucide-react";
@@ -108,6 +109,16 @@ const Home = () => {
 
   return (
     <Layout>
+      <Helmet>
+        <title>Akshar One | Luxury Real Estate & Premium Homes</title>
+        <meta name="title" content="Akshar One | Luxury Real Estate & Premium Homes" />
+        <meta name="description" content="Discover India's finest luxury real estate with Akshar One. Browse exclusive listings of premium villas, apartments, and penthouses in prime locations." />
+        <meta name="keywords" content="luxury real estate india, premium home buying, luxury villas for sale, high end apartments, real estate investment" />
+        <meta property="og:title" content="Akshar One | Luxury Real Estate & Premium Homes" />
+        <meta property="og:description" content="Discover India's finest luxury real estate with Akshar One. Browse exclusive listings of premium villas, apartments, and penthouses in prime locations." />
+        <meta property="og:image" content={heroImage} />
+        <link rel="canonical" href="https://aksharone.com/" />
+      </Helmet>
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
         {/* Background Video/Image Carousel */}

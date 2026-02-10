@@ -1,4 +1,6 @@
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { Helmet } from "react-helmet-async";
+import { motion, useInView } from "framer-motion";
 import { Award, Users, Target, Heart, CheckCircle } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { SectionHeading } from "@/components/SectionHeading";
@@ -43,6 +45,16 @@ const milestones = [
 const About = () => {
   return (
     <Layout>
+      <Helmet>
+        <title>About Us | Akshar One Luxury Real Estate</title>
+        <meta name="title" content="About Us | Akshar One Luxury Real Estate" />
+        <meta name="description" content="Learn about Akshar One's legacy in luxury real estate. Over 15 years of excellence in connecting discerning buyers with extraordinary properties." />
+        <meta name="keywords" content="about akshar one, luxury real estate company, real estate agents, property consultants, our story" />
+        <meta property="og:title" content="About Us | Akshar One Luxury Real Estate" />
+        <meta property="og:description" content="Learn about Akshar One's legacy in luxury real estate. Over 15 years of excellence in connecting discerning buyers with extraordinary properties." />
+        <link rel="canonical" href="https://aksharone.com/about" />
+      </Helmet>
+
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 lg:pb-32">
         <div className="absolute inset-0 -z-10">

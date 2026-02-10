@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useState, useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { BlogCard } from "@/components/BlogCard";
@@ -13,13 +14,17 @@ interface Category {
 }
 
 const Blogs = () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [blogs, setBlogs] = useState<Blog[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<string>("All");
     const [isLoading, setIsLoading] = useState(true);
 
+    const [allBlogs, setAllBlogs] = useState<Blog[]>([]); // Helper for filtering
+
     useEffect(() => {
         fetchInitialData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fetchInitialData = async () => {
@@ -49,9 +54,9 @@ const Blogs = () => {
         }
     };
 
-    const fetchBlogs = async (categoryName?: string) => {
+    const fetchBlogs = async () => {
         if (!supabase) return;
-        let query = supabase
+        const query = supabase
             .from('blogs')
             .select(`
                 *,
@@ -61,22 +66,6 @@ const Blogs = () => {
             `)
             .order('created_at', { ascending: false });
 
-        // If categoryName is provided and not "All", filter
-        // Note: filtering by joined column is tricky in simple syntax, usually easier to filter by category_id if we had it.
-        // Or we can filter payload in JS.
-        // But better to use !inner join to filter.
-
-        // For simplicity, let's just fetch all and filter in JS for this demo, 
-        // unless we want to do a proper filtered query which requires knowing category ID or using inner join.
-        // Let's rely on finding category ID from the list.
-
-        // If we want to filter by category name:
-        if (categoryName && categoryName !== "All") {
-            // Find category ID
-            // The categories state might not be set yet if we call this directly, but it is set in fetchInitialData.
-            // But valid point.
-            // Let's simple filter client side for now as it's cleaner for "All" view anyway.
-        }
 
         const { data, error } = await query;
         if (error) {
@@ -96,15 +85,26 @@ const Blogs = () => {
             author: item.author || "Admin"
         }));
 
+        setAllBlogs(mappedBlogs);
         setBlogs(mappedBlogs);
     };
 
     const filteredBlogs = selectedCategory === "All"
-        ? blogs
-        : blogs.filter(blog => blog.category === selectedCategory);
+        ? allBlogs
+        : allBlogs.filter(blog => blog.category === selectedCategory);
 
     return (
         <Layout>
+            <Helmet>
+                <title>Real Estate Insights & News | Akshar One Blog</title>
+                <meta name="title" content="Real Estate Insights & News | Akshar One Blog" />
+                <meta name="description" content="Stay updated with the latest luxury real estate trends, market insights, and property news on the Akshar One blog." />
+                <meta name="keywords" content="real estate blog, luxury property news, property investment tips, real estate trends, akshar one insights" />
+                <meta property="og:title" content="Real Estate Insights & News | Akshar One Blog" />
+                <meta property="og:description" content="Stay updated with the latest luxury real estate trends, market insights, and property news on the Akshar One blog." />
+                <link rel="canonical" href="https://aksharone.com/blogs" />
+            </Helmet>
+
             {/* Hero Section */}
             <section className="relative h-[50vh] flex items-center justify-center bg-zinc-900 text-white overflow-hidden">
                 <div className="absolute inset-0 bg-black/50 z-10" />

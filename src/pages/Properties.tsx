@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { Filter, X } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
@@ -208,6 +209,16 @@ const Properties = () => {
 
   return (
     <Layout>
+      <Helmet>
+        <title>Luxury Properties for Sale | Akshar One</title>
+        <meta name="title" content="Luxury Properties for Sale | Akshar One" />
+        <meta name="description" content="Browse our curated collection of luxury properties. From modern apartments to sprawling estates, find your dream home with Akshar One." />
+        <meta name="keywords" content="luxury homes for sale, real estate listings, buy property, premium apartments, luxury villas" />
+        <meta property="og:title" content="Luxury Properties for Sale | Akshar One" />
+        <meta property="og:description" content="Browse our curated collection of luxury properties. From modern apartments to sprawling estates, find your dream home with Akshar One." />
+        <link rel="canonical" href="https://aksharone.com/properties" />
+      </Helmet>
+
       {/* Hero Section */}
       <section className="pt-32 pb-16 bg-secondary">
         <div className="container-luxury">

@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
@@ -29,6 +30,16 @@ const contactInfo = [
 const Contact = () => {
   return (
     <Layout>
+      <Helmet>
+        <title>Contact Us | Akshar One Luxury Real Estate</title>
+        <meta name="title" content="Contact Us | Akshar One Luxury Real Estate" />
+        <meta name="description" content="Get in touch with Akshar One for your luxury real estate needs. Whether buying or selling, our team is ready to assist you. Contact us today." />
+        <meta name="keywords" content="contact akshar one, luxury real estate contact, real estate inquiry, buy luxury home, sell luxury property" />
+        <meta property="og:title" content="Contact Us | Akshar One Luxury Real Estate" />
+        <meta property="og:description" content="Get in touch with Akshar One for your luxury real estate needs. Whether buying or selling, our team is ready to assist you. Contact us today." />
+        <link rel="canonical" href="https://aksharone.com/contact" />
+      </Helmet>
+
       {/* Hero Section */}
       <section className="pt-32 pb-16 bg-secondary">
         <div className="container-luxury">

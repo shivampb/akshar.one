@@ -402,35 +402,38 @@ export const BlogDialog = ({ open, onOpenChange, editingBlog, onSuccess }: BlogD
                         <TabsContent value="seo" className="space-y-6">
                             <div className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="metaTitle">Meta Title</Label>
+                                    <Label htmlFor="metaTitle">Meta Title <span className="text-destructive">*</span></Label>
                                     <Input
                                         id="metaTitle"
                                         value={metaTitle}
                                         onChange={(e) => setMetaTitle(e.target.value)}
                                         placeholder="SEO optimized title (defaults to blog title)"
+                                        required
                                     />
                                     <p className="text-xs text-muted-foreground">Recommended length: 50-60 characters</p>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="metaDescription">Meta Description</Label>
+                                    <Label htmlFor="metaDescription">Meta Description <span className="text-destructive">*</span></Label>
                                     <Textarea
                                         id="metaDescription"
                                         value={metaDescription}
                                         onChange={(e) => setMetaDescription(e.target.value)}
                                         placeholder="SEO description for search results"
                                         rows={3}
+                                        required
                                     />
                                     <p className="text-xs text-muted-foreground">Recommended length: 150-160 characters</p>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="keywords">Keywords</Label>
+                                    <Label htmlFor="keywords">Keywords <span className="text-destructive">*</span></Label>
                                     <Input
                                         id="keywords"
                                         value={keywords}
                                         onChange={(e) => setKeywords(e.target.value)}
                                         placeholder="Comma separated keywords (e.g. real estate, investment, luxury)"
+                                        required
                                     />
                                 </div>
                             </div>

@@ -16,6 +16,8 @@ export interface Blog {
     keywords?: string;
 }
 
+// ... (interfaces remain unchanged)
+
 export const blogs: Blog[] = [
     {
         id: 1,

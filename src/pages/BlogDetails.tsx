@@ -96,6 +96,7 @@ const BlogDetails = () => {
         <Layout>
             <Helmet>
                 <title>{blog.meta_title || blog.title} | Real Estate Insights</title>
+                <meta name="title" content={`${blog.meta_title || blog.title} | Real Estate Insights`} />
                 <meta name="description" content={blog.meta_description || blog.excerpt} />
                 <meta name="keywords" content={blog.keywords || "real estate, luxury homes, investment, property trends"} />
                 {/* Open Graph / Facebook */}

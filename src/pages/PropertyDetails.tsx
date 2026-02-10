@@ -149,12 +149,31 @@ const PropertyDetails = () => {
     <Layout>
       <Helmet>
         <title>{property.meta_title || `${property.name} | Real Estate`}</title>
+        <meta name="title" content={property.meta_title || `${property.name} | Real Estate`} />
         <meta
           name="description"
           content={property.meta_description || property.shortDescription}
         />
         {property.keywords && (
           <meta name="keywords" content={property.keywords} />
+        )}
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:title" content={property.meta_title || `${property.name} | Real Estate`} />
+        <meta property="og:description" content={property.meta_description || property.shortDescription} />
+        {property.images && property.images.length > 0 && (
+          <meta property="og:image" content={property.images[0]} />
+        )}
+
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content={window.location.href} />
+        <meta property="twitter:title" content={property.meta_title || `${property.name} | Real Estate`} />
+        <meta property="twitter:description" content={property.meta_description || property.shortDescription} />
+        {property.images && property.images.length > 0 && (
+          <meta property="twitter:image" content={property.images[0]} />
         )}
       </Helmet>
 
