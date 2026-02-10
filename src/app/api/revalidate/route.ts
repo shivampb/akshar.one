@@ -2,17 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  // Verify the webhook token for security
-  const token = request.headers.get("Authorization")?.replace("Bearer ", "");
-  const webhookToken = process.env.PRISMIC_WEBHOOK_TOKEN;
-
-  if (!webhookToken || token !== webhookToken) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   try {
-    // Revalidate Prismic cache
+    const body = await request.json();
+
+    // Prismic webhooks send the secret in the JSON body
+    const secret = body.secret;
+    const webhookToken = process.env.PRISMIC_WEBHOOK_TOKEN;
+
+    if (!webhookToken || secret !== webhookToken) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Revalidate all pages to reflect Prismic changes
     revalidatePath("/", "layout");
+
     return NextResponse.json({ revalidated: true, now: Date.now() });
   } catch (error) {
     console.error("Revalidation failed:", error);
