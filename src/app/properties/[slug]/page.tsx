@@ -59,6 +59,13 @@ function mapPrismicToProperty(doc: any): Property {
     configuration: data.configuration || undefined,
     rera_id: prismic.asText(data.rera_id) || undefined,
     map_url: data.map_url || undefined,
+    brochure_url: prismic.asLink(data.brochure) || undefined,
+    faqs: data.faqs
+      ? data.faqs.map((item: any) => ({
+        question: item.question || "",
+        answer: prismic.asText(item.answer) || "",
+      }))
+      : [],
 
     // SEO
     meta_title: data.meta_title || undefined,

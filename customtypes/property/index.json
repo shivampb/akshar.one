@@ -25,7 +25,12 @@
         "config": {
           "label": "Category",
           "placeholder": "Select Category",
-          "options": ["Residential", "Commercial", "Industrial", "Agricultural"]
+          "options": [
+            "Residential",
+            "Commercial",
+            "Industrial",
+            "Agricultural"
+          ]
         }
       },
       "type": {
@@ -212,6 +217,37 @@
         "config": {
           "label": "Google Map Embed Link",
           "placeholder": "Paste the Google Maps iframe src URL or share link here"
+        }
+      },
+      "brochure": {
+        "type": "Link",
+        "config": {
+          "label": "Project Brochure",
+          "placeholder": "Upload PDF Brochure",
+          "select": "media"
+        }
+      },
+      "faqs": {
+        "type": "Group",
+        "config": {
+          "label": "FAQs",
+          "fields": {
+            "question": {
+              "type": "Text",
+              "config": {
+                "label": "Question",
+                "placeholder": "e.g. Is this property ready to move?"
+              }
+            },
+            "answer": {
+              "type": "StructuredText",
+              "config": {
+                "label": "Answer",
+                "placeholder": "Write the answer here...",
+                "single": "paragraph,strong,em,hyperlink"
+              }
+            }
+          }
         }
       }
     },

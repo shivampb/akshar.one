@@ -52,19 +52,33 @@ export const PropertyLocation = ({ property }: PropertyLocationProps) => {
             </div>
 
             <div className="aspect-video rounded-sm overflow-hidden bg-muted">
-                <iframe
-                    src={property.map_url || `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${property.coordinates && property.coordinates.lat !== 0
-                        ? `${property.coordinates.lat},${property.coordinates.lng}`
-                        : encodeURIComponent(property.address)
-                        }`}
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title={`Map location of ${property.name}`}
-                />
+                {(() => {
+                    let mapLink = property.map_url;
+
+                    // If it's a regular Google Maps link, try to convert it to an embed link
+                    if (mapLink && !mapLink.includes("/embed") && mapLink.includes("google.com/maps")) {
+                        if (mapLink.includes("place/")) {
+                            const place = mapLink.split("place/")[1].split("/")[0];
+                            mapLink = `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${place}`;
+                        }
+                    }
+
+                    return (
+                        <iframe
+                            src={mapLink || `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${property.coordinates && property.coordinates.lat !== 0
+                                ? `${property.coordinates.lat},${property.coordinates.lng}`
+                                : encodeURIComponent(property.address)
+                                }`}
+                            width="100%"
+                            height="100%"
+                            style={{ border: 0 }}
+                            allowFullScreen
+                            loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"
+                            title={`Map location of ${property.name}`}
+                        />
+                    );
+                })()}
             </div>
         </motion.div>
     );
