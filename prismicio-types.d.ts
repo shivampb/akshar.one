@@ -70,6 +70,31 @@ type ContentRelationshipFieldWithData<
 }[Exclude<TCustomType[number], string>["id"]];
 
 /**
+ * Item in *Blog Post → FAQs*
+ */
+export interface BlogPostDocumentDataFaqsItem {
+  /**
+   * Question field in *Blog Post → FAQs*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: e.g. What is the possession date?
+   * - **API ID Path**: blog_post.faqs[].question
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  question: prismic.KeyTextField;
+
+  /**
+   * Answer field in *Blog Post → FAQs*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: Answer with formatting...
+   * - **API ID Path**: blog_post.faqs[].answer
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  answer: prismic.RichTextField;
+}
+
+/**
  * Content for Blog Post documents
  */
 interface BlogPostDocumentData {
@@ -154,7 +179,18 @@ interface BlogPostDocumentData {
    * - **Tab**: Main
    * - **Documentation**: https://prismic.io/docs/fields/rich-text
    */
-  content: prismic.RichTextField; /**
+  content: prismic.RichTextField;
+
+  /**
+   * FAQs field in *Blog Post*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: blog_post.faqs[]
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  faqs: prismic.GroupField<Simplify<BlogPostDocumentDataFaqsItem>>; /**
    * Meta Title field in *Blog Post*
    *
    * - **Field Type**: Text
@@ -1262,6 +1298,7 @@ declare module "@prismicio/client" {
     export type {
       BlogPostDocument,
       BlogPostDocumentData,
+      BlogPostDocumentDataFaqsItem,
       PageDocument,
       PageDocumentData,
       PageDocumentDataSlicesSlice,
